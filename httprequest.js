@@ -1,6 +1,8 @@
 const axios = require('axios');
 const creds = require('./creds.js');
 
+const TOKEN_TIMEOUT_MINS = 60;
+
 const getDefaultHeaders = alias => {
     return {
         'Authorization': `Bearer ${alias.currentToken}`,
@@ -83,7 +85,7 @@ const getAccessToken = async (alias) => {
 
 const isTokenExpired = (alias) => {
     return !alias.lastRequest || 
-           Date.now() - alias.lastRequest > (1000*60*60);
+           Date.now() - alias.lastRequest > (1000*60*TOKEN_TIMEOUT_MINS);
 }
 
 const checkCurrentToken = async (alias) => {
