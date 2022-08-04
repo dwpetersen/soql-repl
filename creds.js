@@ -15,8 +15,46 @@ const saveAlias = (alias) => {
     fs.writeFileSync(`${CREDS_PATH}/${alias.name}.json`, JSON.stringify(alias, null, 4));
 };
 
-//const creds = getCreds();
-//let currentAlias = creds[creds.default];
+const getAccessToken = async () => {
+    const request = httpRequest.buildAccessTokenRequest(creds.currentAlias);
+    try {
+        const response = await request;
+        return response.data.access_token;
+    }
+    catch(error) {
+        throw error;
+    }
+};
+
+const isTokenExpired = (alias) => {
+    return !alias.lastRequest || 
+           Date.now() - alias.lastRequest > (1000*60*60);
+}
+
+const checkCurrentToken = async () => {
+    let validToken = true;
+    if (!currentAlias.currentToken) {
+        console.log(`Could not find currentToken for alias '${currentAlias.name}'.`);
+        validToken = false;
+    }
+    else if (isTokenExpired(creds.currentAlias)) {
+        console.log(`Token has expired for alias '${currentAlias.name}'.`);
+        validToken = false;
+    }
+    if (!validToken) {
+        console.log(`Setting currentToken...`);
+        try {
+            const token = await getAccessToken();
+            creds.currentAlias.currentToken = token;
+            creds.currentAlias.lastRequest = new Date();
+            creds.saveAlias(currentAlias);
+        }
+        catch (error) {
+            throw error;
+        }         
+    }
+};
+
 let currentAlias = openAlias(settings.defaultAlias);
 
 module.exports = {
