@@ -1,0 +1,14 @@
+{
+  "name": "soql-repl",
+  "version": "0.0.1",
+  "description": "Run SOQL queries in node repl.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dean Petersen",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.27.2"
+  }
+}
