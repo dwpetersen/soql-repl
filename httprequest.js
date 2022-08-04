@@ -57,7 +57,15 @@ const get = async (alias, path, headers) => {
     const params = [path, config];
 
     await checkCurrentToken(alias);
-    return retry(axios.get, params, 3);
+    const retryPromise = retry(axios.get, params, 3);
+    
+    return new Promise((resolve) => {
+        retryPromise.then((response) => {
+            alias.lastRequest = new Date();
+            creds.saveAlias(alias);
+            resolve(response);
+        });
+    });
 }
 
 const getAccessToken = async (alias) => {
