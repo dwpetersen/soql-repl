@@ -24,14 +24,40 @@ const buildFormData = (alias) => {
     return formData;
 }
 
+const retry = async (request, params, retries) => {
+    return new Promise( async (resolve, reject) => {
+        let count = 0;
+        let success = false;
+        while (count < retries && !success) {
+            try {
+                const response = await request(...params);
+                success = true;
+                resolve(response);
+            }
+            catch (err) {
+                if (!err.request) {
+                    reject(err);
+                }
+            }
+
+            count++;
+        }
+
+        reject(`Could not complete request. Maximum retries reached (${retries}).`);
+    });
+}
+
 const get = async (alias, path, headers) => {
     const defaultHeaders = getDefaultHeaders(alias);
     const config = {
         baseURL: alias.url,
         headers: { ...defaultHeaders, ...headers }
     }
-    await checkCurrentToken(alias)
-    return axios.get(path, config);
+
+    const params = [path, config];
+
+    await checkCurrentToken(alias);
+    return retry(axios.get, params, 3);
 }
 
 const getAccessToken = async (alias) => {
