@@ -31,18 +31,14 @@ const buildAccessTokenRequest = (alias) => {
                 .then({});
 }
 
-const buildGetRequest = (alias, path, headers) => {
+const get = async (alias, path, headers) => {
     const defaultHeaders = getDefaultHeaders(alias);
     const config = {
         baseURL: alias.url,
         headers: { ...defaultHeaders, ...headers }
     }
-
-    return new Promise((resolve, reject) => {
-        checkCurrentToken(alias).then(() => {
-            resolve(axios.get(path, config));
-        }).catch((err) => reject(err));
-    });
+    await checkCurrentToken(alias)
+    return axios.get(path, config);
 }
 
 const getAccessToken = async (alias) => {
@@ -87,5 +83,5 @@ const checkCurrentToken = async (alias) => {
 
 module.exports = {
     buildAccessTokenRequest,
-    buildGetRequest
+    get
 };
