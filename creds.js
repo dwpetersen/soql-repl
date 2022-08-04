@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { settings } = require('./settings.js');
+const httpRequest = require('./httprequest.js');
 
 const CREDS_PATH = 'creds';
 
@@ -44,7 +44,7 @@ const checkCurrentToken = async (alias) => {
     if (!validToken) {
         console.log(`Setting currentToken...`);
         try {
-            const token = await getAccessToken();
+            const token = await getAccessToken(alias);
             alias.currentToken = token;
             alias.lastRequest = new Date();
             saveAlias(alias);
@@ -55,9 +55,8 @@ const checkCurrentToken = async (alias) => {
     }
 };
 
-let currentAlias = openAlias(settings.defaultAlias);
-
 module.exports = {
-    currentAlias,
-    saveAlias
+    openAlias,
+    saveAlias,
+    checkCurrentToken
 };
