@@ -1,4 +1,5 @@
 const axios = require('axios');
+const creds = require('./creds.js');
 
 const getDefaultHeaders = alias => {
     return {
@@ -23,14 +24,6 @@ const buildFormData = (alias) => {
     return formData;
 }
 
-const buildAccessTokenRequest = (alias) => {
-    const url = 'https://login.salesforce.com/services/oauth2/token';
-    const data = buildFormData(alias);
-
-    return axios.post(url, data)
-                .then({});
-}
-
 const get = async (alias, path, headers) => {
     const defaultHeaders = getDefaultHeaders(alias);
     const config = {
@@ -42,9 +35,11 @@ const get = async (alias, path, headers) => {
 }
 
 const getAccessToken = async (alias) => {
-    const request = buildAccessTokenRequest(alias);
     try {
-        const response = await request;
+        const url = 'https://login.salesforce.com/services/oauth2/token';
+        const data = buildFormData(alias);
+
+        const response = await axios.post(url, data);
         return response.data.access_token;
     }
     catch(error) {
@@ -73,7 +68,7 @@ const checkCurrentToken = async (alias) => {
             const token = await getAccessToken(alias);
             alias.currentToken = token;
             alias.lastRequest = new Date();
-            saveAlias(alias);
+            creds.saveAlias(alias);
         }
         catch (error) {
             throw error;
@@ -82,6 +77,5 @@ const checkCurrentToken = async (alias) => {
 };
 
 module.exports = {
-    buildAccessTokenRequest,
     get
 };
