@@ -13,8 +13,7 @@ const getAccounts = async () => {
                 .build();
     const path  = `/services/data/v55.0/query/?q=${accountQuery.queryParamString}`;
     try {
-        await creds.checkCurrentToken(currentAlias);
-        const request = httpRequest.buildGetRequest(currentAlias, path);
+        const request = await httpRequest.buildGetRequest(currentAlias, path);
         const response = await request;
         return response.data;
     }
