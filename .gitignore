@@ -1,9 +1,13 @@
+# Packages
 node_modules/
 
+## VS Code
+.vscode/*
 !.vscode/launch.json
 
-.vscode/*
-
+# Configuration
 creds/*
 settings.json
+
+# Debugging
 scratchpad.js
