@@ -61,12 +61,12 @@ const get = async (alias, path, headers) => {
     await checkCurrentToken(alias);
     const retryPromise = retry(axios.get, params, 3);
     
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         retryPromise.then((response) => {
             alias.lastRequest = new Date();
             creds.saveAlias(alias);
             resolve(response);
-        });
+        }).catch(reject);
     });
 }
 
