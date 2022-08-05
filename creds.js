@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { settings } = require('./settings.js');
 
 const CREDS_PATH = 'creds';
 
@@ -15,11 +14,7 @@ const saveAlias = (alias) => {
     fs.writeFileSync(`${CREDS_PATH}/${alias.name}.json`, JSON.stringify(alias, null, 4));
 };
 
-//const creds = getCreds();
-//let currentAlias = creds[creds.default];
-let currentAlias = openAlias(settings.defaultAlias);
-
 module.exports = {
-    currentAlias,
+    openAlias,
     saveAlias
 };

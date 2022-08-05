@@ -34,14 +34,6 @@ class SOQLQuery {
     }
 }
 
-/*let newQuery = new SOQLQuery();
-newQuery.select('Id', 'Name')
-.from('Account')
-.limit(1)
-.build();
-
-console.log(newQuery.queryParamString);*/
-
 module.exports = {
     SOQLQuery
 }
