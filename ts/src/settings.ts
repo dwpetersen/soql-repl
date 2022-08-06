@@ -1,8 +1,8 @@
-const fs = require('fs');
+import { readFileSync } from 'fs';
 
 const openSettings = () => {
-    const settingsFile = fs.readFileSync('settings.json');
-    return JSON.parse(settingsFile);
+    const settingsFile = readFileSync('settings.json');
+    return settingsFile.toJSON();
 }
 
-const settings = openSettings();
+export const settings = openSettings();
