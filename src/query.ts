@@ -1,3 +1,4 @@
+import { stringify } from 'querystring';
 import { Alias } from './creds'
 import * as httpRequest from './httprequest';
 
@@ -43,6 +44,35 @@ export class SOQLQuery {
         return this;
     }
 
+    private operandToString(operand: string|number|Date|null) {
+        let stringValue: string = '';
+        if (typeof operand === 'string') {
+            stringValue = `'${operand}'`;
+        }
+        else if (operand instanceof Date ||
+                 typeof operand === 'number') {
+            stringValue = operand.toString();
+        }
+        else if (operand === null) {
+            stringValue = 'null';
+        }
+
+        return stringValue;
+    }
+
+    private addExpression(operator: string, operand: string|number|Date|null) {
+        let stringValue = this.operandToString(operand);
+
+        if (this.inWhere) {
+            this.whereItems.push(...[operator, stringValue]);
+        }
+    }
+
+    equals(operand: string|number|Date|null) {
+        this.addExpression('=', operand);
+        return this;
+    }
+
     limit(value: number) {
         this.limitValue = value;
         return this;
@@ -53,6 +83,8 @@ export class SOQLQuery {
                                  this.selectItems.join(','),
                                  'FROM',
                                  this.fromValue,
+                                 'WHERE',
+                                 ...this.whereItems,
                                  'LIMIT',
                                  this.limitValue].join('+');
         this.path = `/services/data/v55.0/query/?q=${this.paramString}`;

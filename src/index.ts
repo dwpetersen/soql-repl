@@ -10,6 +10,7 @@ export const getAccounts = async (): Promise<SOQLQueryResult | undefined> => {
     accountQuery.select('Id','Name')
                 .from('Account')
                 .where('Name')
+                .equals('Burlington Textiles Corp of America')
                 .limit(5)
                 .build();
     console.log(accountQuery.paramString);
