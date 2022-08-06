@@ -1,4 +1,3 @@
-import { stringify } from 'querystring';
 import { Alias } from './creds'
 import * as httpRequest from './httprequest';
 
@@ -15,6 +14,17 @@ export interface SObject {
     };
 }
 
+enum Statements {
+    SELECT,
+    FROM,
+    WHERE,
+    LIMIT
+}
+
+type Operator = '='|'!='|'<'|'<='|
+                '>'|'>='|'LIKE'|'IN'|
+                'NOT IN'|'INCLUDES'|'EXCLUDES';
+
 export class SOQLQuery {
     private selectItems: string[] = [];
     private fromValue: string = '';
@@ -23,7 +33,7 @@ export class SOQLQuery {
     public paramString?: string;
     public path?: string;
     public result?: SOQLQueryResult;
-    private inWhere: boolean = false;
+    private currentStatement?: Statements;
 
     constructor() {
     }
@@ -39,7 +49,7 @@ export class SOQLQuery {
     }
 
     where(field: string) {
-        this.inWhere = true;
+        this.currentStatement = Statements.WHERE;
         this.whereItems.push(field);
         return this;
     }
@@ -60,16 +70,15 @@ export class SOQLQuery {
         return stringValue;
     }
 
-    private addExpression(operator: string, operand: string|number|Date|null) {
+    private addExpression(operator: Operator, operand: string|number|Date|null, itemList: any[]) {
         let stringValue = this.operandToString(operand);
-
-        if (this.inWhere) {
-            this.whereItems.push(...[operator, stringValue]);
-        }
+        itemList.push(...[operator, stringValue]);
     }
 
     equals(operand: string|number|Date|null) {
-        this.addExpression('=', operand);
+        if (this.currentStatement === Statements.WHERE) {
+            this.addExpression('=', operand, this.whereItems);
+        }
         return this;
     }
 
