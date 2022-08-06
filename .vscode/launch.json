@@ -8,7 +8,9 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/scratchpad.js"
+            "program": "${workspaceFolder}/scratchpad.js",
+            "preLaunchTask": "npm: dev",
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"]
         }
     ]
 }
