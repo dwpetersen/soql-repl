@@ -1,3 +1,16 @@
+export type SOQLQueryResult = {
+    totalSize: number;
+    done: boolean;
+    records: SObject[];
+};
+
+export interface SObject {
+    attributes: {
+        type: string;
+        url: string;
+    };
+}
+
 export class SOQLQuery {
     selectItems: string[] = [];
     fromValue: string = '';
