@@ -1,17 +1,18 @@
 import { AxiosResponse } from 'axios';
 import axios from 'axios';
+import { Alias } from './creds';
 import * as creds from './creds';
 
 const TOKEN_TIMEOUT_MINS = 60;
 
-const getDefaultHeaders = alias => {
+const getDefaultHeaders = (alias: Alias) => {
     return {
         'Authorization': `Bearer ${alias.currentToken}`,
         'Accept': 'application/json'
     }
 }
 
-const buildFormData = (alias) => {
+const buildFormData = (alias: Alias) => {
     const data = {
         grant_type: 'password',
         client_id: alias.clientId,
@@ -20,14 +21,16 @@ const buildFormData = (alias) => {
         password: alias.password + alias.securityToken
     }
 
-    const formData = Object.keys(data).map(key => {
-        return encodeURI(key) + '=' + encodeURI(data[key]);
+    Object.entries
+
+    const formData = Object.entries(data).map(entry => {
+        return encodeURI(entry[0]) + '=' + encodeURI(entry[1]);
     }).join('&');
 
     return formData;
 }
 
-async function retry<T>(request, params, retries): Promise<T> {
+async function retry<T>(request: (...args: any) => Promise<any>, params: any[], retries: number): Promise<T> {
     return new Promise<T>( async (resolve, reject) => {
         let count = 0;
         let success = false;
@@ -37,7 +40,7 @@ async function retry<T>(request, params, retries): Promise<T> {
                 success = true;
                 resolve(response);
             }
-            catch (err) {
+            catch (err: any) {
                 if (!err.request) {
                     reject(err);
                 }
@@ -50,7 +53,7 @@ async function retry<T>(request, params, retries): Promise<T> {
     });
 }
 
-export async function get<T = any, R = AxiosResponse<T>>(alias, path: string, headers?): Promise<AxiosResponse<T>> {
+export async function get<T = any>(alias: Alias, path: string, headers?: object): Promise<AxiosResponse<T>> {
     const defaultHeaders = getDefaultHeaders(alias);
     const config = {
         baseURL: alias.url,
@@ -71,7 +74,7 @@ export async function get<T = any, R = AxiosResponse<T>>(alias, path: string, he
     });
 }
 
-const getAccessToken = async (alias) => {
+const getAccessToken = async (alias: Alias) => {
     try {
         const url = 'https://login.salesforce.com/services/oauth2/token';
         const data = buildFormData(alias);
@@ -84,12 +87,12 @@ const getAccessToken = async (alias) => {
     }
 };
 
-const isTokenExpired = (alias) => {
+const isTokenExpired = (alias: Alias) => {
     return !alias.lastRequest || 
-           Date.now() - alias.lastRequest > (1000*60*TOKEN_TIMEOUT_MINS);
+           Date.now() - alias.lastRequest.getTime() > (1000*60*TOKEN_TIMEOUT_MINS);
 }
 
-const checkCurrentToken = async (alias) => {
+const checkCurrentToken = async (alias: Alias) => {
     let validToken = true;
     if (!alias.currentToken) {
         console.log(`Could not find currentToken for alias '${alias.name}'.`);

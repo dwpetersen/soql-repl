@@ -1,25 +1,25 @@
 export class SOQLQuery {
-    selectItems = [];
-    fromValue;
+    selectItems: string[] = [];
+    fromValue: string = '';
     whereItems = [];
-    limitValue;
-    queryParamString;
+    limitValue: number = 0;
+    queryParamString: string = '';
 
     constructor() {
 
     }
 
-    select(...fields) {
+    select(...fields: string[]) {
         this.selectItems.push(...fields);
         return this;
     }
 
-    from(sObject) {
+    from(sObject: string) {
         this.fromValue = sObject;
         return this;
     }
 
-    limit(value) {
+    limit(value: number) {
         this.limitValue = value;
         return this;
     }
