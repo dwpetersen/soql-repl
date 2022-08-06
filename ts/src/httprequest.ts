@@ -1,5 +1,5 @@
-const axios = require('axios');
-const creds = require('./creds.js');
+import axios from 'axios';
+import * as creds from './creds';
 
 const TOKEN_TIMEOUT_MINS = 60;
 
@@ -110,8 +110,4 @@ const checkCurrentToken = async (alias) => {
             throw error;
         }         
     }
-};
-
-module.exports = {
-    get
 };
