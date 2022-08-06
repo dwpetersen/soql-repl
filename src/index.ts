@@ -11,11 +11,9 @@ export const getAccounts = async (): Promise<SOQLQueryResult | undefined> => {
                 .from('Account')
                 .limit(5)
                 .build();
-    const path  = `/services/data/v55.0/query/?q=${accountQuery.queryParamString}`;
     try {
-        const response = await httpRequest.get(currentAlias, path);
-        const soqlResponse: SOQLQueryResult = response.data;
-        return soqlResponse;
+        await accountQuery.execute(currentAlias);
+        return accountQuery.result;
     }
     catch(error) {
         console.error(error);

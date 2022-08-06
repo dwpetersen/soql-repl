@@ -1,3 +1,6 @@
+import { Alias } from './creds'
+import * as httpRequest from './httprequest';
+
 export type SOQLQueryResult = {
     totalSize: number;
     done: boolean;
@@ -12,14 +15,15 @@ export interface SObject {
 }
 
 export class SOQLQuery {
-    selectItems: string[] = [];
-    fromValue: string = '';
-    whereItems = [];
-    limitValue: number = 0;
-    queryParamString: string = '';
+    private selectItems: string[] = [];
+    private fromValue: string = '';
+    private whereItems = [];
+    private limitValue?: number;
+    public paramString?: string;
+    public path?: string;
+    public result?: SOQLQueryResult;
 
     constructor() {
-
     }
 
     select(...fields: string[]) {
@@ -38,11 +42,22 @@ export class SOQLQuery {
     }
 
     build() {
-        this.queryParamString = ['SELECT',
+        this.paramString = ['SELECT',
                                  this.selectItems.join(','),
                                  'FROM',
                                  this.fromValue,
                                  'LIMIT',
                                  this.limitValue].join('+');
+        this.path = `/services/data/v55.0/query/?q=${this.paramString}`;
+    }
+
+    async execute(alias: Alias) {
+        if (this.path) {
+            const response = await httpRequest.get(alias, this.path);
+            this.result = response.data;
+        }
+        else {
+            throw new Error('Path must be set on SOQLQuery');
+        }
     }
 }
