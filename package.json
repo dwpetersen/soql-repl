@@ -4,7 +4,7 @@
   "description": "Run SOQL queries in node repl.",
   "main": "index.js",
   "scripts": {
-    "dev": "tsc --sourcemap",
+    "dev": "tsc --sourcemap --incremental",
     "build": "tsc",
     "clean": "rm -r dist/*",
     "test": "echo \"Error: no test specified\" && exit 1"

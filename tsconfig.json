@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
-        "rootDir": "src",
-        "outDir": "dist",
+        "outDir": "./dist",
         "module": "commonjs"
-    }
+    },
+    "include": [
+        "src/**/*"
+    ]
 }
