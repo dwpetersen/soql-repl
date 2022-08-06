@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import axios from 'axios';
 import * as creds from './creds';
 
@@ -26,8 +27,8 @@ const buildFormData = (alias) => {
     return formData;
 }
 
-const retry = async (request, params, retries) => {
-    return new Promise( async (resolve, reject) => {
+async function retry<T>(request, params, retries): Promise<T> {
+    return new Promise<T>( async (resolve, reject) => {
         let count = 0;
         let success = false;
         while (count < retries && !success) {
@@ -49,7 +50,7 @@ const retry = async (request, params, retries) => {
     });
 }
 
-export const get = async (alias, path, headers) => {
+export async function get<T = any, R = AxiosResponse<T>>(alias, path: string, headers?): Promise<AxiosResponse<T>> {
     const defaultHeaders = getDefaultHeaders(alias);
     const config = {
         baseURL: alias.url,
@@ -59,9 +60,9 @@ export const get = async (alias, path, headers) => {
     const params = [path, config];
 
     await checkCurrentToken(alias);
-    const retryPromise = retry(axios.get, params, 3);
+    const retryPromise = retry<AxiosResponse<T>>(axios.get<T>, params, 3);
     
-    return new Promise((resolve, reject) => {
+    return new Promise<AxiosResponse<T>>((resolve, reject) => {
         retryPromise.then((response) => {
             alias.lastRequest = new Date();
             creds.saveAlias(alias);

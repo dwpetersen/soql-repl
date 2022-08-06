@@ -1,11 +1,11 @@
-const creds = require('./creds.js');
-const httpRequest = require('./httprequest.js');
+import * as creds from './creds';
+import * as httpRequest from './httprequest';
 import { SOQLQuery } from './query'
-const { settings } = require('./settings.js');
+import { settings } from './settings';
 
 let currentAlias = creds.openAlias(settings.defaultAlias);
 
-const getAccounts = async () => {
+export const getAccounts = async () => {
     const accountQuery = new SOQLQuery();
     accountQuery.select('Id','Name')
                 .from('Account')
@@ -21,6 +21,3 @@ const getAccounts = async () => {
     }
 };
 
-module.exports = {
-    getAccounts
-}
