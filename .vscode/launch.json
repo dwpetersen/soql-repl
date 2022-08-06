@@ -10,7 +10,7 @@
             ],
             "program": "${workspaceFolder}/scratchpad.js",
             "preLaunchTask": "npm: dev",
-            "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+            "outFiles": ["${workspaceFolder}/dist/*.js"]
         }
     ]
 }
