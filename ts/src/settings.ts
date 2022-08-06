@@ -1,8 +1,8 @@
-import { readFileSync } from 'fs';
+import * as fs from 'fs';
 
 const openSettings = () => {
-    const settingsFile = readFileSync('settings.json');
-    return settingsFile.toJSON();
+    const settingsFile = fs.readFileSync('settings.json');
+    return JSON.parse(settingsFile.toString());
 }
 
 export const settings = openSettings();
