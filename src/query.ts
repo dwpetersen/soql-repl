@@ -17,11 +17,12 @@ export interface SObject {
 export class SOQLQuery {
     private selectItems: string[] = [];
     private fromValue: string = '';
-    private whereItems = [];
+    private whereItems: string[] = [];
     private limitValue?: number;
     public paramString?: string;
     public path?: string;
     public result?: SOQLQueryResult;
+    private inWhere: boolean = false;
 
     constructor() {
     }
@@ -33,6 +34,12 @@ export class SOQLQuery {
 
     from(sObject: string) {
         this.fromValue = sObject;
+        return this;
+    }
+
+    where(field: string) {
+        this.inWhere = true;
+        this.whereItems.push(field);
         return this;
     }
 
