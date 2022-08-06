@@ -49,7 +49,7 @@ const retry = async (request, params, retries) => {
     });
 }
 
-const get = async (alias, path, headers) => {
+export const get = async (alias, path, headers) => {
     const defaultHeaders = getDefaultHeaders(alias);
     const config = {
         baseURL: alias.url,

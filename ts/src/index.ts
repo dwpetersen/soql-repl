@@ -1,6 +1,6 @@
 const creds = require('./creds.js');
 const httpRequest = require('./httprequest.js');
-const { SOQLQuery } = require('./query.js');
+import { SOQLQuery } from './query'
 const { settings } = require('./settings.js');
 
 let currentAlias = creds.openAlias(settings.defaultAlias);

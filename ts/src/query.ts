@@ -1,4 +1,4 @@
-class SOQLQuery {
+export class SOQLQuery {
     selectItems = [];
     fromValue;
     whereItems = [];
@@ -32,8 +32,4 @@ class SOQLQuery {
                                  'LIMIT',
                                  this.limitValue].join('+');
     }
-}
-
-module.exports = {
-    SOQLQuery
 }
