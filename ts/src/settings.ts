@@ -6,7 +6,3 @@ const openSettings = () => {
 }
 
 const settings = openSettings();
-
-module.exports = {
-    settings
-};
