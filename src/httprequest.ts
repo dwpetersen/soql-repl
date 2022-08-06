@@ -41,7 +41,7 @@ async function retry<T>(request: (...args: any) => Promise<any>, params: any[], 
                 resolve(response);
             }
             catch (err: any) {
-                if (!err.request) {
+                if (err.response) {
                     reject(err);
                 }
             }
