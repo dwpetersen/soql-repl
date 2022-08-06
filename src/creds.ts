@@ -17,7 +17,7 @@ export type Alias = {
 export const openAlias = (name: string) => {
     const aliasFile = fs.readFileSync(`${CREDS_PATH}/${name}.json`);
     const alias: Alias = JSON.parse(aliasFile.toString());
-    //alias.lastRequest = alias.lastRequest ? new Date(alias.lastRequest) : undefined;
+    alias.lastRequest = alias.lastRequest ? new Date(alias.lastRequest) : undefined;
     return alias;
 } 
 
