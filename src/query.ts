@@ -87,7 +87,7 @@ export class SOQLQuery {
                                  ...this.whereItems,
                                  'LIMIT',
                                  this.limitValue].join('+');
-        this.path = `/services/data/v55.0/query/?q=${this.paramString}`;
+        this.path = encodeURI(`/services/data/v55.0/query/?q=${this.paramString}`);
     }
 
     async execute(alias: Alias) {
