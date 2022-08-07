@@ -26,14 +26,14 @@ type Operator = '='|'!='|'<'|'<='|
                 'NOT IN'|'INCLUDES'|'EXCLUDES';
 
 export class SOQLQuery {
-    private selectItems: string[] = [];
-    private fromValue: string = '';
-    private whereItems: string[] = [];
-    private limitValue?: number;
-    public paramString?: string;
-    public path?: string;
-    public result?: SOQLQueryResult;
-    private currentStatement?: Statements;
+    selectItems: string[] = [];
+    fromValue: string = '';
+    whereItems: string[] = [];
+    limitValue?: number;
+    paramString?: string;
+    path?: string;
+    result?: SOQLQueryResult;
+    currentStatement?: Statements;
 
     constructor() {
     }
