@@ -25,6 +25,8 @@ type Operator = '='|'!='|'<'|'<='|
                 '>'|'>='|'LIKE'|'IN'|
                 'NOT IN'|'INCLUDES'|'EXCLUDES';
 
+type Operand = string|number|Date|null
+
 export const QUERY_PATH = '/services/data/v55.0/query/?q=';
 
 export class SOQLQuery {
@@ -72,15 +74,19 @@ export class SOQLQuery {
         return stringValue;
     }
 
-    private addExpression(operator: Operator, operand: string|number|Date|null, itemList: any[]) {
+    private addExpression(operator: Operator, operand: Operand, itemList: any[]) {
         let stringValue = this.operandToString(operand);
         itemList.push(...[operator, stringValue]);
     }
 
-    equals(operand: string|number|Date|null) {
+    private handleOperator(operator: Operator, operand: Operand) {
         if (this.currentStatement === Statements.WHERE) {
-            this.addExpression('=', operand, this.whereItems);
+            this.addExpression(operator, operand, this.whereItems);
         }
+    }
+
+    equals(operand: Operand) {
+        this.handleOperator('=', operand);
         return this;
     }
 
