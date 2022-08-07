@@ -14,7 +14,7 @@ export interface SObject {
     };
 }
 
-enum Statements {
+export enum Statements {
     SELECT,
     FROM,
     WHERE,
