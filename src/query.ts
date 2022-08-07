@@ -28,6 +28,7 @@ type Operator = '='|'!='|'<'|'<='|
 type Operand = string|number|Date|null
 
 export const QUERY_PATH = '/services/data/v55.0/query/?q=';
+export const ERROR_PATH_MUST_BE_SET = 'Path must be set on SOQLQuery'
 
 export class SOQLQuery {
     selectItems: string[] = [];
@@ -119,7 +120,7 @@ export class SOQLQuery {
             this.result = response.data;
         }
         else {
-            throw new Error('Path must be set on SOQLQuery');
+            throw new Error(ERROR_PATH_MUST_BE_SET);
         }
     }
 }

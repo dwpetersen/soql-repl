@@ -1,11 +1,22 @@
 import * as httpRequest from '../httprequest';
 import { Alias } from '../creds';
-import { QUERY_PATH, SOQLQuery, Statements } from '../query';
+import { ERROR_PATH_MUST_BE_SET, QUERY_PATH, SOQLQuery, Statements } from '../query';
 import { AxiosResponse } from 'axios';
 
 jest.mock('../httprequest');
 
 const mockedGet = httpRequest.get as jest.Mock;
+
+const alias: Alias = {
+    name: 'test',
+    url: 'https://test-domain.my.salesforce.com',
+    clientId: 'clientId123',
+    clientSecret: 'clientSecret123',
+    username: 'test@example.com',
+    password: 'password123!',
+    securityToken: 'securityToken123',
+    currentToken: 'currentToken123'
+}
 
 test('select() adds items to selectItems', () => {
     const query = new SOQLQuery();
@@ -153,18 +164,22 @@ test('execute() returns response when path is set', async () => {
             ]
         }
     };
-    const alias: Alias = {
-        name: 'test',
-        url: 'https://test-domain.my.salesforce.com',
-        clientId: 'clientId123',
-        clientSecret: 'clientSecret123',
-        username: 'test@example.com',
-        password: 'password123!',
-        securityToken: 'securityToken123',
-        currentToken: 'currentToken123'
-    }
+    
     mockedGet.mockResolvedValue(response as AxiosResponse<any>);
 
     await query.execute(alias);
     expect(query.result).toEqual(response.data);
+});
+
+test('execute() returns an error when path is not set', async () => {
+    const query = new SOQLQuery().select('Id', 'Name')
+                                 .from('Account')
+                                 .limit(5);
+    expect.assertions(1);
+    try {
+        await query.execute(alias);
+    }
+    catch (err) {
+        expect(err).toEqual(new Error(ERROR_PATH_MUST_BE_SET))
+    }
 });
