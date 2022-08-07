@@ -90,6 +90,11 @@ export class SOQLQuery {
         return this;
     }
 
+    notEquals(operand: Operand) {
+        this.handleOperator('!=', operand);
+        return this;
+    }
+
     limit(value: number) {
         this.limitValue = value;
         return this;

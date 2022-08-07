@@ -73,6 +73,35 @@ test('equals() converts operand to a string if it\'s null', () => {
     expect(query.whereItems.pop()).toBe(expectedOperand);
 });
 
+test('notEquals() adds single quotes to operand if it\'s a string', () => {
+    const operand = 'John';
+    const query = new SOQLQuery()
+                        .where('Name')
+                        .notEquals(operand);
+    const expectedOperand = `'${operand}'`;
+    expect(query.whereItems.pop()).toBe(expectedOperand);
+});
+
+test('notEquals() converts operand to a string if it\'s a Date', () => {
+    const operand = new Date('2000-01-01');
+    const query = new SOQLQuery()
+                        .where('CreatedDate')
+                        .notEquals(operand);
+
+    const expectedOperand = operand.toString();
+    expect(query.whereItems.pop()).toBe(expectedOperand);
+});
+
+test('notEquals() converts operand to a string if it\'s null', () => {
+    const operand = null;
+    const query = new SOQLQuery()
+                        .where('Color__c')
+                        .notEquals(operand);
+
+    const expectedOperand = 'null';
+    expect(query.whereItems.pop()).toBe(expectedOperand);
+});
+
 test('limit() sets limitValue to value', () => {
     const value = 5;
     const query = new SOQLQuery()
