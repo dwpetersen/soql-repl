@@ -25,6 +25,8 @@ type Operator = '='|'!='|'<'|'<='|
                 '>'|'>='|'LIKE'|'IN'|
                 'NOT IN'|'INCLUDES'|'EXCLUDES';
 
+export const QUERY_PATH = '/services/data/v55.0/query/?q=';
+
 export class SOQLQuery {
     selectItems: string[] = [];
     fromValue: string = '';
@@ -88,15 +90,16 @@ export class SOQLQuery {
     }
 
     build() {
-        this.paramString = ['SELECT',
+        this.paramString = encodeURI(['SELECT',
                                  this.selectItems.join(','),
                                  'FROM',
                                  this.fromValue,
                                  'WHERE',
                                  ...this.whereItems,
                                  'LIMIT',
-                                 this.limitValue].join('+');
-        this.path = encodeURI(`/services/data/v55.0/query/?q=${this.paramString}`);
+                                 this.limitValue].join('+'));
+        this.path = QUERY_PATH + this.paramString;
+        return this;
     }
 
     async execute(alias: Alias) {

@@ -9,11 +9,10 @@ export const getAccounts = async (): Promise<SOQLQueryResult | undefined> => {
     const accountQuery = new SOQLQuery();
     accountQuery.select('Id','Name')
                 .from('Account')
-                .where('NumberofLocations__c')
-                .equals(6)
+                .where('Name')
+                .equals('Burlington Textiles Corp of America')
                 .limit(5)
                 .build();
-    console.log(accountQuery.paramString);
     try {
         await accountQuery.execute(currentAlias);
         return accountQuery.result;

@@ -1,4 +1,4 @@
-import { SOQLQuery, Statements } from '../query'
+import { QUERY_PATH, SOQLQuery, Statements } from '../query'
 
 test('select() adds items to selectItems', () => {
     const query = new SOQLQuery();
@@ -79,4 +79,19 @@ test('limit() sets limitValue to value', () => {
                         .limit(value);
 
     expect(query.limitValue).toBe(value);
+});
+
+test('build() sets paramString and path', () => {
+    const value = 5;
+    const query = new SOQLQuery().select('Id', 'Name')
+                                .from('Account')
+                                .where('Name')
+                                .equals('Umbrella Corp')
+                                .limit(value)
+                                .build();
+
+    const expectedParamString = `SELECT+Id,Name+FROM+Account+WHERE+Name+=+'Umbrella%20Corp'+LIMIT+5`;
+    const expectedPath = `${QUERY_PATH}${expectedParamString}`;
+    expect(query.paramString).toBe(expectedParamString);
+    expect(query.path).toBe(expectedPath);
 });
