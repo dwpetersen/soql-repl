@@ -1,4 +1,11 @@
-import { QUERY_PATH, SOQLQuery, Statements } from '../query'
+import * as httpRequest from '../httprequest';
+import { Alias } from '../creds';
+import { QUERY_PATH, SOQLQuery, Statements } from '../query';
+import { AxiosResponse } from 'axios';
+
+jest.mock('../httprequest');
+
+const mockedGet = httpRequest.get as jest.Mock;
 
 test('select() adds items to selectItems', () => {
     const query = new SOQLQuery();
@@ -123,4 +130,41 @@ test('build() sets paramString and path', () => {
     const expectedPath = `${QUERY_PATH}${expectedParamString}`;
     expect(query.paramString).toBe(expectedParamString);
     expect(query.path).toBe(expectedPath);
+});
+
+test('execute() returns response when path is set', async () => {
+    const query = new SOQLQuery().select('Id', 'Name')
+                                 .from('Account')
+                                 .limit(5)
+                                 .build();
+    const response = { 
+        data: {
+            "totalSize": 1,
+            "done": true,
+            "records": [
+                {
+                "attributes": {
+                    "type": "Account",
+                    "url": "/services/data/v55.0/sobjects/Account/0015i00000MLQoqAAH"
+                },
+                "Id": "0015i00000MLQoqAAH",
+                "Name": "Burlington Textiles Corp of America"
+                }
+            ]
+        }
+    };
+    const alias: Alias = {
+        name: 'test',
+        url: 'https://test-domain.my.salesforce.com',
+        clientId: 'clientId123',
+        clientSecret: 'clientSecret123',
+        username: 'test@example.com',
+        password: 'password123!',
+        securityToken: 'securityToken123',
+        currentToken: 'currentToken123'
+    }
+    mockedGet.mockResolvedValue(response as AxiosResponse<any>);
+
+    await query.execute(alias);
+    expect(query.result).toEqual(response.data);
 });
