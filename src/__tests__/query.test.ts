@@ -44,3 +44,31 @@ test('when currentStatement = WHERE equals() does not change whereItems', () => 
     expect(query.whereItems.length).toBe(0);
 });
 
+test('equals() adds single quotes to operand if it\'s a string', () => {
+    const operand = 'John';
+    const query = new SOQLQuery()
+                        .where('Name')
+                        .equals(operand);
+    const expectedOperand = `'${operand}'`;
+    expect(query.whereItems.pop()).toBe(expectedOperand);
+});
+
+test('equals() converts operand to a string if it\'s a Date', () => {
+    const operand = new Date('2000-01-01');
+    const query = new SOQLQuery()
+                        .where('CreatedDate')
+                        .equals(operand);
+
+    const expectedOperand = operand.toString();
+    expect(query.whereItems.pop()).toBe(expectedOperand);
+});
+
+test('equals() converts operand to a string if it\'s null', () => {
+    const operand = null;
+    const query = new SOQLQuery()
+                        .where('Color__c')
+                        .equals(operand);
+
+    const expectedOperand = 'null';
+    expect(query.whereItems.pop()).toBe(expectedOperand);
+});
