@@ -28,3 +28,19 @@ test('where() sets currentStatement to WHERE', () => {
     expect(query.currentStatement).toBe(Statements.WHERE);
 });
 
+test('equals() adds operand and "=" to whereItems when currentStatement = WHERE', () => {
+    const field = 'Number_of_dogs__c'
+    const operand = 5;
+    const query = new SOQLQuery();
+    query.where(field);
+    query.equals(operand);
+    expect(query.whereItems).toEqual([field, '=', operand.toString()]);
+});
+
+test('when currentStatement = WHERE equals() does not change whereItems', () => {
+    const operand = 'Name';
+    const query = new SOQLQuery();
+    query.equals(operand);
+    expect(query.whereItems.length).toBe(0);
+});
+
