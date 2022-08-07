@@ -72,3 +72,11 @@ test('equals() converts operand to a string if it\'s null', () => {
     const expectedOperand = 'null';
     expect(query.whereItems.pop()).toBe(expectedOperand);
 });
+
+test('limit() sets limitValue to value', () => {
+    const value = 5;
+    const query = new SOQLQuery()
+                        .limit(value);
+
+    expect(query.limitValue).toBe(value);
+});
