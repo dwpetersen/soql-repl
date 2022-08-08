@@ -62,16 +62,16 @@ export async function get<T = any>(alias: Alias, path: string, headers?: object)
 
     const params = [path, config];
 
-    await checkCurrentToken(alias);
-    const retryPromise = retry<AxiosResponse<T>>(axios.get<T>, params, 3);
-    
-    return new Promise<AxiosResponse<T>>((resolve, reject) => {
-        retryPromise.then((response) => {
-            alias.lastRequest = new Date();
-            creds.saveAlias(alias);
-            resolve(response);
-        }).catch(reject);
-    });
+    try {
+        await checkCurrentToken(alias);
+        const response = await retry<AxiosResponse<T>>(axios.get<T>, params, 3);
+        alias.lastRequest = new Date();
+        creds.saveAlias(alias);
+        return response;
+    }
+    catch (err) {
+        throw err;
+    }
 }
 
 const getAccessToken = async (alias: Alias) => {
