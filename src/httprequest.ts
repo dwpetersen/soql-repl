@@ -32,7 +32,7 @@ const buildFormData = (alias: Alias) => {
 
 async function retry<T>(request: (...args: any) => Promise<any>,
                         params: any[],
-                        retries: number): Promise<T> {
+                        retries: number = 3): Promise<T> {
     for (let i = 0; i < retries; i++) {
         try {
             const response = await request(...params);
@@ -59,7 +59,7 @@ export async function get<T = any>(alias: Alias, path: string, headers?: object)
 
     try {
         await checkCurrentToken(alias);
-        const response = await retry<AxiosResponse<T>>(axios.get<T>, params, 3);
+        const response = await retry<AxiosResponse<T>>(axios.get<T>, params);
         alias.lastRequest = new Date();
         creds.saveAlias(alias);
         return response;
