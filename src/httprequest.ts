@@ -30,27 +30,22 @@ const buildFormData = (alias: Alias) => {
     return formData;
 }
 
-async function retry<T>(request: (...args: any) => Promise<any>, params: any[], retries: number): Promise<T> {
-    return new Promise<T>( async (resolve, reject) => {
-        let count = 0;
-        let success = false;
-        while (count < retries && !success) {
-            try {
-                const response = await request(...params);
-                success = true;
-                resolve(response);
-            }
-            catch (err: any) {
-                if (err.response) {
-                    reject(err);
-                }
-            }
-
-            count++;
+async function retry<T>(request: (...args: any) => Promise<any>,
+                        params: any[],
+                        retries: number): Promise<T> {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const response = await request(...params);
+            return response;
         }
+        catch (err: any) {
+            if (err.response) {
+                throw err;
+            }
+        }
+    }
 
-        reject(`Could not complete request. Maximum retries reached (${retries}).`);
-    });
+    throw new Error(`Could not complete request. Maximum retries reached (${retries}).`);
 }
 
 export async function get<T = any>(alias: Alias, path: string, headers?: object): Promise<AxiosResponse<T>> {
