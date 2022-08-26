@@ -1,4 +1,5 @@
 import { Alias } from "../../creds";
+import { readFileSync } from "fs";
 
 export function createQueryResponse() {
     return { 
@@ -43,4 +44,10 @@ export function createAlias(lastRequest?: Date): Alias {
         currentToken: 'currentToken123',
         lastRequest
     };
+}
+
+export function createAxiosGetError() {
+    const errorFile = readFileSync('../data/axios/error/get.json');
+    const getError = JSON.parse(errorFile.toString());
+    return getError;
 }
