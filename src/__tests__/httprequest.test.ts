@@ -3,6 +3,7 @@ import { Alias } from '../creds';
 import axios from 'axios';
 import { AxiosResponse } from 'axios';
 import * as fs from 'fs';
+import * as factory from './factory/util'
 
 jest.mock('axios');
 jest.mock('fs');
@@ -11,49 +12,13 @@ const mockGet = axios.get as jest.Mock;
 const mockPost = axios.post as jest.Mock;
 const mockWriteFileSync = fs.writeFileSync as jest.Mock;
 
-function getAlias(lastRequest?: Date): Alias {
-    return {
-        name: 'test',
-        url: 'https://test-domain.my.salesforce.com',
-        clientId: 'clientId123',
-        clientSecret: 'clientSecret123',
-        username: 'test@example.com',
-        password: 'password123!',
-        securityToken: 'securityToken123',
-        currentToken: 'currentToken123',
-        lastRequest
-    };
-}
-
-function getAccountResponse() {
-    return { 
-        data: {
-            "totalSize": 1,
-            "done": true,
-            "records": [
-                {
-                "attributes": {
-                    "type": "Account",
-                    "url": "/services/data/v55.0/sobjects/Account/0015i00000MLQoqAAH"
-                },
-                "Id": "0015i00000MLQoqAAH",
-                "Name": "Burlington Textiles Corp of America"
-                }
-            ]
-        }
-    };
-}
-
-const accountPath = '/services/data/v55.0/query/?q=SELECT+Id,Name+FROM+Account';
-
 describe('get()', () => {
     test('returns response', async () => {
         //Given
-        const alias = getAlias();
-        alias.lastRequest = new Date();
-        const path = accountPath;
+        const alias = factory.createAlias(new Date());
+        const path = factory.createQueryPath();
     
-        const response = getAccountResponse();
+        const response = factory.createQueryResponse();
         mockGet.mockResolvedValue(response as AxiosResponse<any>);
     
         //When
@@ -65,15 +30,11 @@ describe('get()', () => {
     
     test('when alias has no lastRequest, sets token then returns response', async () => {
         //Given
-        const alias = getAlias();
-        const path = accountPath;
+        const alias = factory.createAlias();
+        const path = factory.createQueryPath();
     
-        const tokenResponse = {
-            data: {
-                access_token: 'newToken'
-            }
-        };
-        const response = getAccountResponse();
+        const tokenResponse = factory.createTokenResponse();
+        const response = factory.createQueryResponse();
         mockPost.mockResolvedValue(tokenResponse);
         mockGet.mockResolvedValue(response as AxiosResponse<any>);
     
@@ -91,16 +52,12 @@ describe('get()', () => {
         //Given
         const lastRequest = new Date();
         lastRequest.setHours(lastRequest.getHours() - 2);
-        const alias = getAlias(lastRequest);
+        const alias = factory.createAlias(lastRequest);
     
-        const path = accountPath;
+        const path = factory.createQueryPath();
     
-        const tokenResponse = {
-            data: {
-                access_token: 'newToken'
-            }
-        };
-        const response = getAccountResponse();
+        const tokenResponse = factory.createTokenResponse();
+        const response = factory.createQueryResponse();
         mockPost.mockResolvedValue(tokenResponse);
         mockGet.mockResolvedValue(response as AxiosResponse<any>);
     
