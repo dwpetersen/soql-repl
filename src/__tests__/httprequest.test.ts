@@ -11,7 +11,7 @@ const mockGet = axios.get as jest.Mock;
 const mockPost = axios.post as jest.Mock;
 const mockWriteFileSync = fs.writeFileSync as jest.Mock;
 
-function getAlias(): Alias {
+function getAlias(lastRequest?: Date): Alias {
     return {
         name: 'test',
         url: 'https://test-domain.my.salesforce.com',
@@ -20,7 +20,8 @@ function getAlias(): Alias {
         username: 'test@example.com',
         password: 'password123!',
         securityToken: 'securityToken123',
-        currentToken: 'currentToken123'
+        currentToken: 'currentToken123',
+        lastRequest
     };
 }
 
@@ -61,7 +62,7 @@ test('get() returns response', async () => {
     expect(actualResponse.data).toEqual(response.data);
 });
 
-test('when alias has no lastRequest, get() returns sets token then returns response', async () => {
+test('when alias has no lastRequest, get() sets token then returns response', async () => {
     //Given
     const alias = getAlias();
     const path = accountPath;
@@ -74,7 +75,6 @@ test('when alias has no lastRequest, get() returns sets token then returns respo
     const response = getAccountResponse();
     mockPost.mockResolvedValue(tokenResponse);
     mockGet.mockResolvedValue(response as AxiosResponse<any>);
-    mockWriteFileSync.mockClear();
 
     //When
     const actualResponse = await httpRequest.get(alias, path);
@@ -84,4 +84,35 @@ test('when alias has no lastRequest, get() returns sets token then returns respo
     expect(alias.currentToken).toBe(tokenResponse.data.access_token);
     expect(alias.lastRequest).toBeDefined();
     expect(actualResponse.data).toEqual(response.data);
+});
+
+test('when token is expired, get() sets token then returns response', async () => {
+    //Given
+    const lastRequest = new Date();
+    lastRequest.setHours(lastRequest.getHours() - 2);
+    const alias = getAlias(lastRequest);
+
+    const path = accountPath;
+
+    const tokenResponse = {
+        data: {
+            access_token: 'newToken'
+        }
+    };
+    const response = getAccountResponse();
+    mockPost.mockResolvedValue(tokenResponse);
+    mockGet.mockResolvedValue(response as AxiosResponse<any>);
+
+    //When
+    const actualResponse = await httpRequest.get(alias, path);
+
+    //Then
+    expect(mockWriteFileSync.mock.calls.length).toBe(2);
+    expect(alias.currentToken).toBe(tokenResponse.data.access_token);
+    expect(alias.lastRequest).toBeDefined();
+    expect(actualResponse.data).toEqual(response.data);
+});
+
+afterEach(() => {
+    jest.clearAllMocks();
 });
