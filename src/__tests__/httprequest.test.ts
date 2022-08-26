@@ -46,71 +46,73 @@ function getAccountResponse() {
 
 const accountPath = '/services/data/v55.0/query/?q=SELECT+Id,Name+FROM+Account';
 
-test('get() returns response', async () => {
-    //Given
-    const alias = getAlias();
-    alias.lastRequest = new Date();
-    const path = accountPath;
-
-    const response = getAccountResponse();
-    mockGet.mockResolvedValue(response as AxiosResponse<any>);
-
-    //When
-    const actualResponse = await httpRequest.get(alias, path);
-
-    //Then
-    expect(actualResponse.data).toEqual(response.data);
-});
-
-test('when alias has no lastRequest, get() sets token then returns response', async () => {
-    //Given
-    const alias = getAlias();
-    const path = accountPath;
-
-    const tokenResponse = {
-        data: {
-            access_token: 'newToken'
-        }
-    };
-    const response = getAccountResponse();
-    mockPost.mockResolvedValue(tokenResponse);
-    mockGet.mockResolvedValue(response as AxiosResponse<any>);
-
-    //When
-    const actualResponse = await httpRequest.get(alias, path);
-
-    //Then
-    expect(mockWriteFileSync.mock.calls.length).toBe(2);
-    expect(alias.currentToken).toBe(tokenResponse.data.access_token);
-    expect(alias.lastRequest).toBeDefined();
-    expect(actualResponse.data).toEqual(response.data);
-});
-
-test('when token is expired, get() sets token then returns response', async () => {
-    //Given
-    const lastRequest = new Date();
-    lastRequest.setHours(lastRequest.getHours() - 2);
-    const alias = getAlias(lastRequest);
-
-    const path = accountPath;
-
-    const tokenResponse = {
-        data: {
-            access_token: 'newToken'
-        }
-    };
-    const response = getAccountResponse();
-    mockPost.mockResolvedValue(tokenResponse);
-    mockGet.mockResolvedValue(response as AxiosResponse<any>);
-
-    //When
-    const actualResponse = await httpRequest.get(alias, path);
-
-    //Then
-    expect(mockWriteFileSync.mock.calls.length).toBe(2);
-    expect(alias.currentToken).toBe(tokenResponse.data.access_token);
-    expect(alias.lastRequest).toBeDefined();
-    expect(actualResponse.data).toEqual(response.data);
+describe('get()', () => {
+    test('returns response', async () => {
+        //Given
+        const alias = getAlias();
+        alias.lastRequest = new Date();
+        const path = accountPath;
+    
+        const response = getAccountResponse();
+        mockGet.mockResolvedValue(response as AxiosResponse<any>);
+    
+        //When
+        const actualResponse = await httpRequest.get(alias, path);
+    
+        //Then
+        expect(actualResponse.data).toEqual(response.data);
+    });
+    
+    test('when alias has no lastRequest, sets token then returns response', async () => {
+        //Given
+        const alias = getAlias();
+        const path = accountPath;
+    
+        const tokenResponse = {
+            data: {
+                access_token: 'newToken'
+            }
+        };
+        const response = getAccountResponse();
+        mockPost.mockResolvedValue(tokenResponse);
+        mockGet.mockResolvedValue(response as AxiosResponse<any>);
+    
+        //When
+        const actualResponse = await httpRequest.get(alias, path);
+    
+        //Then
+        expect(mockWriteFileSync.mock.calls.length).toBe(2);
+        expect(alias.currentToken).toBe(tokenResponse.data.access_token);
+        expect(alias.lastRequest).toBeDefined();
+        expect(actualResponse.data).toEqual(response.data);
+    });
+    
+    test('when token is expired, sets token then returns response', async () => {
+        //Given
+        const lastRequest = new Date();
+        lastRequest.setHours(lastRequest.getHours() - 2);
+        const alias = getAlias(lastRequest);
+    
+        const path = accountPath;
+    
+        const tokenResponse = {
+            data: {
+                access_token: 'newToken'
+            }
+        };
+        const response = getAccountResponse();
+        mockPost.mockResolvedValue(tokenResponse);
+        mockGet.mockResolvedValue(response as AxiosResponse<any>);
+    
+        //When
+        const actualResponse = await httpRequest.get(alias, path);
+    
+        //Then
+        expect(mockWriteFileSync.mock.calls.length).toBe(2);
+        expect(alias.currentToken).toBe(tokenResponse.data.access_token);
+        expect(alias.lastRequest).toBeDefined();
+        expect(actualResponse.data).toEqual(response.data);
+    });
 });
 
 afterEach(() => {
