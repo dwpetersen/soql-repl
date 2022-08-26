@@ -5,14 +5,14 @@ import * as creds from './creds';
 
 const TOKEN_TIMEOUT_MINS = 60;
 
-const getDefaultHeaders = (alias: Alias) => {
+function getDefaultHeaders(alias: Alias) {
     return {
         'Authorization': `Bearer ${alias.currentToken}`,
         'Accept': 'application/json'
     }
 }
 
-const buildFormData = (alias: Alias) => {
+function buildFormData(alias: Alias) {
     const data = {
         grant_type: 'password',
         client_id: alias.clientId,
@@ -69,7 +69,7 @@ export async function get<T = any>(alias: Alias, path: string, headers?: object)
     }
 }
 
-const getAccessToken = async (alias: Alias) => {
+async function getAccessToken(alias: Alias) {
     try {
         const url = 'https://login.salesforce.com/services/oauth2/token';
         const data = buildFormData(alias);
@@ -80,14 +80,14 @@ const getAccessToken = async (alias: Alias) => {
     catch(error) {
         throw error;
     }
-};
+}
 
-const isTokenExpired = (alias: Alias) => {
+function isTokenExpired(alias: Alias) {
     return !alias.lastRequest || 
            Date.now() - alias.lastRequest.getTime() > (1000*60*TOKEN_TIMEOUT_MINS);
 }
 
-const checkCurrentToken = async (alias: Alias) => {
+async function checkCurrentToken(alias: Alias) {
     let validToken = true;
     if (!alias.currentToken) {
         console.log(`Could not find currentToken for alias '${alias.name}'.`);
@@ -109,4 +109,4 @@ const checkCurrentToken = async (alias: Alias) => {
             throw error;
         }         
     }
-};
+}
