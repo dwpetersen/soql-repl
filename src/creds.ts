@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const CREDS_PATH = 'creds';
+export const CREDS_PATH = 'creds';
 
 export type Alias = {
     name: string;
