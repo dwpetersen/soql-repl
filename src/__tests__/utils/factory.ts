@@ -50,12 +50,14 @@ export function createAlias(lastRequest?: Date): Alias {
     };
 }
 
-let getError: AxiosError;
+let getErrorTemplate: AxiosError;
 
-export function createAxiosGetError() {
-    if (!getError) {
+export function createAxiosGetError(url?: string) {
+    if (!getErrorTemplate) {
         const errorFile = readFileSync(path.resolve(DATA_PATH, 'axios', 'error', 'get.json'));
-        getError = JSON.parse(errorFile.toString());
+        getErrorTemplate = JSON.parse(errorFile.toString());
     }
+    const getError = {...getErrorTemplate}
+    getError.config.url = url ? url : getError.config.url;
     return getError;
 }

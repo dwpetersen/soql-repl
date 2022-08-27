@@ -77,7 +77,7 @@ describe('get()', () => {
         const alias = factory.createAlias(new Date());
         const path = factory.createQueryPath();
     
-        const response = factory.createAxiosGetError();
+        const response = factory.createAxiosGetError(path);
         mockGet.mockRejectedValue(response as AxiosError<any>);
     
         //When
