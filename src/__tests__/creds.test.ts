@@ -29,7 +29,3 @@ test('when lastRequest is set, openAlias() converts ISO string to Date object', 
     //Then
     expect(actualAlias).toEqual(alias);
 });
-
-afterEach(() => {
-    jest.clearAllMocks();
-});
