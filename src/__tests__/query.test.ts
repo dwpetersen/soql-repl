@@ -133,8 +133,24 @@ describe('in()', () => {
                                      .in(...operandArray);
         
         //Then
-        const expectedItems = [field, 'IN', '(\'Hello\',\'World\')'];
-        expect(query.whereItems).toEqual(expectedItems);
+        const expectedWhereItems = [field, 'IN', '(\'Hello\',\'World\')'];
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+
+    test('when query is not in where clause, whereItems is unchanged', () => {
+        //Given
+        const field = 'Name';
+        const operandArray = ['Hello', 'World'];
+        
+        const query = new SOQLQuery().select('Name', 'CreatedDate')
+                                     .from('Account');
+        const expectedWhereItems = [...query.whereItems];
+        
+        //When
+        query.in(...operandArray);
+        
+        //Then
+        expect(query.whereItems).toEqual(expectedWhereItems);
     });
 });
 
