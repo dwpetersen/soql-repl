@@ -120,10 +120,8 @@ export class SOQLQuery {
 
     in(...operandArray: Operand[]) {
         if (this.currentStatement === Statements.WHERE) {
-            let innerValue = operandArray.map((operand) => {
-                return this.operandToString(operand);
-            }).join(',');
-
+            let innerValue = operandArray.map(this.operandToString)
+                                         .join(',');
             this.whereItems.push(...['IN', `(${innerValue})`]);
         }
         return this;
@@ -131,10 +129,8 @@ export class SOQLQuery {
 
     notIn(...operandArray: Operand[]) {
         if (this.currentStatement === Statements.WHERE) {
-            let innerValue = operandArray.map((operand) => {
-                return this.operandToString(operand);
-            }).join(',');
-
+            let innerValue = operandArray.map(this.operandToString)
+                                         .join(',');
             this.whereItems.push(...['NOT IN', `(${innerValue})`]);
         }
         return this;
@@ -142,6 +138,15 @@ export class SOQLQuery {
 
     like(operand: string) {
         this.handleOperator('LIKE', operand);
+        return this;
+    }
+
+    includes(...operandArray: string[]) {
+        if (this.currentStatement === Statements.WHERE) {
+            let innerValue = operandArray.map(this.operandToString)
+                                         .join(',');
+            this.whereItems.push(...['INCLUDES', `(${innerValue})`]);
+        }
         return this;
     }
 

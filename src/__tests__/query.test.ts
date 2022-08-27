@@ -383,6 +383,40 @@ describe('like()', () => {
     });
 });
 
+describe('includes()', () => {
+    test('adds INCLUDES operator and array string to whereItems', () => {
+        //Given
+        const field = 'Industries__c';
+        const operandArray = ['IT', 'Government'];
+        
+        //When
+        const query = new SOQLQuery().select('Id','Name', 'Industries__c')
+                                     .from('Account')
+                                     .where(field)
+                                     .includes(...operandArray);
+        
+        //Then
+        const expectedWhereItems = [field, 'INCLUDES', '(\'IT\',\'Government\')'];
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+
+    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+        //Given
+        const field = 'Industries__c';
+        const operandArray = ['IT', 'Government'];
+        
+        const query = new SOQLQuery().select('Id','Name', 'Industries__c')
+                                     .from('Account')
+        const expectedWhereItems = [...query.whereItems];
+        
+        //When
+        query.includes(...operandArray);
+        
+        //Then
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+});
+
 test('limit() sets limitValue to value', () => {
     const value = 5;
     const query = new SOQLQuery()
