@@ -28,6 +28,14 @@
     "method": "get",
     "url": "/services/data/v55.0/query/?q=SELECT+Id,Name+FROM+Account+WHERE+Name+=+5+LIMIT+5"
   },
+  "response": {
+    "data": [
+      {
+        "message": "\nSELECT Id,Name FROM Account WHERE Name = 5 LIMIT 5\n                                  ^\nERROR at Row:1:Column:35\nvalue of filter criterion for field 'Name' must be of type string and should be enclosed in quotes",
+        "errorCode": "INVALID_FIELD"
+      }
+    ]
+  }, 
   "code": "ERR_BAD_REQUEST",
   "status": 400
 }

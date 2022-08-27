@@ -73,7 +73,7 @@ describe('get()', () => {
         expect(actualResponse.data).toEqual(response.data);
     });
 
-    test('when callout fails, three attempts are made before throwing error', async () => {
+    test('when ENOTFOUND error occurs, three attempts are made before throwing error', async () => {
         //Given
         const alias = factory.createAlias(new Date());
         const path = factory.createQueryPath();
@@ -93,6 +93,28 @@ describe('get()', () => {
         //Then
         expect(isError).toBeTruthy();
         expect(mockGet.mock.calls.length).toBe(3);
+    });
+
+    test('when error response is received, an error is thrown', async () => {
+        //Given
+        const alias = factory.createAlias(new Date());
+        const path = factory.createQueryPath();
+    
+        const response = mocks.axios.get.error.badRequest();
+        mockGet.mockRejectedValue(response as AxiosError<any>);
+    
+        //When
+        let isError = false;
+        try {
+            await httpRequest.get(alias, path);
+        }
+        catch (err) {
+            isError = true;
+        }
+    
+        //Then
+        expect(isError).toBeTruthy();
+        expect(mockGet.mock.calls.length).toBe(1);
     });
 });
 
