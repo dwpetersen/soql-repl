@@ -42,9 +42,6 @@ async function retry<T>(request: (...args: any) => Promise<any>,
             if (err.response) {
                 throw err;
             }
-            else {
-                throw err;
-            }
         }
     }
 

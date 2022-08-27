@@ -1,5 +1,6 @@
 import { Alias } from "../../creds";
 import { readFileSync } from "fs";
+import { AxiosError } from "axios";
 
 export function createQueryResponse() {
     return { 
@@ -46,8 +47,12 @@ export function createAlias(lastRequest?: Date): Alias {
     };
 }
 
+let getError: AxiosError;
+
 export function createAxiosGetError() {
-    const errorFile = readFileSync('../data/axios/error/get.json');
-    const getError = JSON.parse(errorFile.toString());
+    if (!getError) {
+        const errorFile = readFileSync('./src/__tests__/data/axios/error/get.json');
+        getError = JSON.parse(errorFile.toString());
+    }
     return getError;
 }
