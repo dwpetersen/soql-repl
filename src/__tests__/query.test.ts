@@ -417,6 +417,40 @@ describe('includes()', () => {
     });
 });
 
+describe('excludes()', () => {
+    test('adds EXCLUDES operator and array string to whereItems', () => {
+        //Given
+        const field = 'Industries__c';
+        const operandArray = ['IT', 'Government'];
+        
+        //When
+        const query = new SOQLQuery().select('Id','Name', 'Industries__c')
+                                     .from('Account')
+                                     .where(field)
+                                     .excludes(...operandArray);
+        
+        //Then
+        const expectedWhereItems = [field, 'EXCLUDES', '(\'IT\',\'Government\')'];
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+
+    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+        //Given
+        const field = 'Industries__c';
+        const operandArray = ['IT', 'Government'];
+        
+        const query = new SOQLQuery().select('Id','Name', 'Industries__c')
+                                     .from('Account')
+        const expectedWhereItems = [...query.whereItems];
+        
+        //When
+        query.excludes(...operandArray);
+        
+        //Then
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+});
+
 test('limit() sets limitValue to value', () => {
     const value = 5;
     const query = new SOQLQuery()

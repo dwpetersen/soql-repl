@@ -150,6 +150,15 @@ export class SOQLQuery {
         return this;
     }
 
+    excludes(...operandArray: string[]) {
+        if (this.currentStatement === Statements.WHERE) {
+            let innerValue = operandArray.map(this.operandToString)
+                                         .join(',');
+            this.whereItems.push(...['EXCLUDES', `(${innerValue})`]);
+        }
+        return this;
+    }
+
     limit(value: number) {
         this.limitValue = value;
         return this;
