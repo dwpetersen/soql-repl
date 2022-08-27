@@ -96,18 +96,9 @@ describe('equals()', () => {
 });
 
 describe('notEquals()', () => {
-    test('adds single quotes to operand if it\'s a string', () => {
-        const operand = 'John';
-        const query = new SOQLQuery()
-                            .where('Name')
-                            .notEquals(operand);
-        const expectedOperand = `'${operand}'`;
-        expect(query.whereItems.pop()).toBe(expectedOperand);
-    });
-
     test('adds operand and "!=" to whereItems when currentStatement == WHERE', () => {
         //Given
-        const field = 'Number_of_dogs__c'
+        const field = 'Number_of_dogs__c';
         const operand = 5;
         const query = new SOQLQuery().select('Name', 'CreatedDate')
                                      .from('Account')
@@ -123,7 +114,7 @@ describe('notEquals()', () => {
     
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
         //Given
-        const field = 'Number_of_dogs__c'
+        const field = 'Number_of_dogs__c';
         const operand = 5;
         const query = new SOQLQuery().select('Name', 'CreatedDate')
                                      .from('Account');
@@ -166,6 +157,38 @@ describe('in()', () => {
         query.in(...operandArray);
         
         //Then
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+});
+
+describe('like()', () => {
+    test('adds operand and "LIKE" to whereItems when currentStatement == WHERE', () => {
+        //Given
+        const field = 'Name';
+        const operand = 'Hello%';
+        const query = new SOQLQuery().select('Name', 'CreatedDate')
+                                     .from('Account')
+                                     .where(field);
+
+        // When
+        query.like(operand);
+
+        //Then
+        const expectedWhereItems = [field, 'LIKE', `'${operand.toString()}'`];
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+    
+    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+        //Given
+        const field = 'Name';
+        const operand = 'Hello%';
+        const query = new SOQLQuery().select('Name', 'CreatedDate')
+                                     .from('Account');
+        const expectedWhereItems = [...query.whereItems];
+        
+        // When
+        query.like(operand);
+
         expect(query.whereItems).toEqual(expectedWhereItems);
     });
 });
