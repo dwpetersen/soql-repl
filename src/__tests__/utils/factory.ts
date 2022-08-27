@@ -1,6 +1,9 @@
 import { Alias } from "../../creds";
 import { readFileSync } from "fs";
 import { AxiosError } from "axios";
+import * as path from 'path';
+
+const DATA_PATH = path.resolve('src', '__tests__', 'data');
 
 export function createQueryResponse() {
     return { 
@@ -51,7 +54,7 @@ let getError: AxiosError;
 
 export function createAxiosGetError() {
     if (!getError) {
-        const errorFile = readFileSync('./src/__tests__/data/axios/error/get.json');
+        const errorFile = readFileSync(path.resolve(DATA_PATH, 'axios', 'error', 'get.json'));
         getError = JSON.parse(errorFile.toString());
     }
     return getError;

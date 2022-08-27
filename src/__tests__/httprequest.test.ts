@@ -1,5 +1,4 @@
 import * as httpRequest from '../httprequest';
-import { Alias } from '../creds';
 import axios from 'axios';
 import { AxiosResponse, AxiosError } from 'axios';
 import * as fs from 'fs';

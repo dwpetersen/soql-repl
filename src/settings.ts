@@ -1,7 +1,9 @@
 import * as fs from 'fs';
+import * as path from 'path';
 
 const openSettings = () => {
-    const settingsFile = fs.readFileSync('./config/settings.json');
+    const settingsPath = path.resolve('config', 'settings.json');
+    const settingsFile = fs.readFileSync(settingsPath);
     return JSON.parse(settingsFile.toString());
 }
 

@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 
 const CREDS_PATH = 'creds';
 
@@ -14,13 +15,17 @@ export type Alias = {
     lastRequest?: Date;
 }
 
+function getAliasPath(name: string) {
+    return path.resolve(CREDS_PATH, `${name}.json`);
+}
+
 export const openAlias = (name: string) => {
-    const aliasFile = fs.readFileSync(`${CREDS_PATH}/${name}.json`);
+    const aliasFile = fs.readFileSync(getAliasPath(name));
     const alias: Alias = JSON.parse(aliasFile.toString());
     alias.lastRequest = alias.lastRequest ? new Date(alias.lastRequest) : undefined;
     return alias;
 } 
 
 export const saveAlias = (alias: Alias) => {
-    fs.writeFileSync(`${CREDS_PATH}/${alias.name}.json`, JSON.stringify(alias, null, 4));
+    fs.writeFileSync(getAliasPath(alias.name), JSON.stringify(alias, null, 4));
 };
