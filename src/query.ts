@@ -107,6 +107,11 @@ export class SOQLQuery {
         return this;
     }
 
+    like(operand: string) {
+        this.handleOperator('LIKE', operand);
+        return this;
+    }
+
     limit(value: number) {
         this.limitValue = value;
         return this;
