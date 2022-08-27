@@ -28,6 +28,7 @@ test('when lastRequest is set, openAlias() converts ISO string to Date object', 
     const actualAlias = creds.openAlias(alias.name);
 
     //Then
+    expect(actualAlias.lastRequest).toBeInstanceOf(Date);
     expect(actualAlias).toEqual(alias);
 });
 
