@@ -120,6 +120,24 @@ test('notEquals() converts operand to a string if it\'s null', () => {
     expect(query.whereItems.pop()).toBe(expectedOperand);
 });
 
+describe('in()', () => {
+    test('adds IN operator and array string to whereItems', () => {
+        //Given
+        const field = 'Name';
+        const operandArray = ['Hello', 'World'];
+        
+        //When
+        const query = new SOQLQuery().select('Name', 'CreatedDate')
+                                     .from('Account')
+                                     .where(field)
+                                     .in(...operandArray);
+        
+        //Then
+        const expectedItems = [field, 'IN', '(\'Hello\',\'World\')'];
+        expect(query.whereItems).toEqual(expectedItems);
+    });
+});
+
 test('limit() sets limitValue to value', () => {
     const value = 5;
     const query = new SOQLQuery()
