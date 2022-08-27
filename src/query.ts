@@ -25,7 +25,7 @@ type Operator = '='|'!='|'<'|'<='|
                 '>'|'>='|'LIKE'|'IN'|
                 'NOT IN'|'INCLUDES'|'EXCLUDES';
 
-type Operand = string|number|Date|null
+type Operand = string|number|Date|null;
 
 export const QUERY_PATH = '/services/data/v55.0/query/?q=';
 export const ERROR_PATH_MUST_BE_SET = 'Path must be set on SOQLQuery'
@@ -59,7 +59,7 @@ export class SOQLQuery {
         return this;
     }
 
-    private operandToString(operand: string|number|Date|null) {
+    private operandToString(operand: Operand) {
         let stringValue: string = '';
         if (typeof operand === 'string') {
             stringValue = `'${operand}'`;
@@ -93,6 +93,17 @@ export class SOQLQuery {
 
     notEquals(operand: Operand) {
         this.handleOperator('!=', operand);
+        return this;
+    }
+
+    in(...operandArray: Operand[]) {
+        if (this.currentStatement === Statements.WHERE) {
+            let innerValue = operandArray.map((operand) => {
+                return this.operandToString(operand);
+            }).join(',');
+
+            this.whereItems.push(...['IN', `(${innerValue})`]);
+        }
         return this;
     }
 
