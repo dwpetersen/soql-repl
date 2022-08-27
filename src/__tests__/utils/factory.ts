@@ -1,6 +1,4 @@
 import { Alias } from "../../creds";
-import { readFileSync } from "fs";
-import { AxiosError } from "axios";
 import * as path from 'path';
 
 const DATA_PATH = path.resolve('src', '__tests__', 'data');
@@ -48,16 +46,4 @@ export function createAlias(lastRequest?: Date): Alias {
         currentToken: 'currentToken123',
         lastRequest
     };
-}
-
-let getErrorTemplate: AxiosError;
-
-export function createAxiosGetError(url?: string) {
-    if (!getErrorTemplate) {
-        const errorFile = readFileSync(path.resolve(DATA_PATH, 'axios', 'error', 'get.json'));
-        getErrorTemplate = JSON.parse(errorFile.toString());
-    }
-    const getError = {...getErrorTemplate}
-    getError.config.url = url ? url : getError.config.url;
-    return getError;
 }

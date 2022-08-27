@@ -1,0 +1,33 @@
+{
+  "message": "Request failed with status code 400",
+  "name": "AxiosError",
+  "config": {
+    "transitional": {
+      "silentJSONParsing": true,
+      "forcedJSONParsing": true,
+      "clarifyTimeoutError": false
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1,
+    "env": {},
+    "headers": {
+      "Accept": "application/json",
+      "Authorization": "Bearer currentToken123",
+      "User-Agent": "axios/0.27.2"
+    },
+    "baseURL": "https://test-domain.my.salesforce.com",
+    "method": "get",
+    "url": "/services/data/v55.0/query/?q=SELECT+Id,Name+FROM+Account+WHERE+Name+=+5+LIMIT+5"
+  },
+  "code": "ERR_BAD_REQUEST",
+  "status": 400
+}

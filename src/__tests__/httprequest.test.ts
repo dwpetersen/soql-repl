@@ -3,6 +3,7 @@ import axios from 'axios';
 import { AxiosResponse, AxiosError } from 'axios';
 import * as fs from 'fs';
 import * as factory from './utils/factory';
+import * as mocks from './utils/mocks';
 
 jest.mock('axios');
 
@@ -77,7 +78,7 @@ describe('get()', () => {
         const alias = factory.createAlias(new Date());
         const path = factory.createQueryPath();
     
-        const response = factory.createAxiosGetError(path);
+        const response = mocks.axios.get.error.notFound();
         mockGet.mockRejectedValue(response as AxiosError<any>);
     
         //When
