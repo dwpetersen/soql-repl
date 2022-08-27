@@ -87,6 +87,20 @@ describe('equals()', () => {
         const expectedOperand = `'O\\'Donnell\\'s Whisky'`;
         expect(query.whereItems.pop()).toBe(expectedOperand);
     });
+
+    test('escapes backslash if operand is a string', () => {
+        //Given
+        const operand = `C:\\Users`;
+
+        //When
+        const query = new SOQLQuery()
+                            .where('Name')
+                            .equals(operand);
+        
+        //Then
+        const expectedOperand = `'C:\\\\Users'`;
+        expect(query.whereItems.pop()).toBe(expectedOperand);
+    });
     
     test('converts operand to a string if it\'s a Date', () => {
         const operand = new Date('2000-01-01');
