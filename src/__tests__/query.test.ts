@@ -317,6 +317,40 @@ describe('in()', () => {
     });
 });
 
+describe('notIn()', () => {
+    test('adds NOT IN operator and array string to whereItems', () => {
+        //Given
+        const field = 'Name';
+        const operandArray = ['Hello', 'World'];
+        
+        //When
+        const query = new SOQLQuery().select('Name', 'CreatedDate')
+                                     .from('Account')
+                                     .where(field)
+                                     .notIn(...operandArray);
+        
+        //Then
+        const expectedWhereItems = [field, 'NOT IN', '(\'Hello\',\'World\')'];
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+
+    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+        //Given
+        const field = 'Name';
+        const operandArray = ['Hello', 'World'];
+        
+        const query = new SOQLQuery().select('Name', 'CreatedDate')
+                                     .from('Account');
+        const expectedWhereItems = [...query.whereItems];
+        
+        //When
+        query.notIn(...operandArray);
+        
+        //Then
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+});
+
 describe('like()', () => {
     test('adds operand and "LIKE" to whereItems when currentStatement == WHERE', () => {
         //Given

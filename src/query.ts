@@ -129,6 +129,17 @@ export class SOQLQuery {
         return this;
     }
 
+    notIn(...operandArray: Operand[]) {
+        if (this.currentStatement === Statements.WHERE) {
+            let innerValue = operandArray.map((operand) => {
+                return this.operandToString(operand);
+            }).join(',');
+
+            this.whereItems.push(...['NOT IN', `(${innerValue})`]);
+        }
+        return this;
+    }
+
     like(operand: string) {
         this.handleOperator('LIKE', operand);
         return this;
