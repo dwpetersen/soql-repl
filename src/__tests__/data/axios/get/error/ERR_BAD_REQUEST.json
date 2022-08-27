@@ -1,41 +1,41 @@
 {
-  "message": "Request failed with status code 400",
-  "name": "AxiosError",
-  "config": {
-    "transitional": {
-      "silentJSONParsing": true,
-      "forcedJSONParsing": true,
-      "clarifyTimeoutError": false
+    "message": "Request failed with status code 400",
+    "name": "AxiosError",
+    "config": {
+        "transitional": {
+            "silentJSONParsing": true,
+            "forcedJSONParsing": true,
+            "clarifyTimeoutError": false
+        },
+        "transformRequest": [
+            null
+        ],
+        "transformResponse": [
+            null
+        ],
+        "timeout": 0,
+        "xsrfCookieName": "XSRF-TOKEN",
+        "xsrfHeaderName": "X-XSRF-TOKEN",
+        "maxContentLength": -1,
+        "maxBodyLength": -1,
+        "env": {},
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Bearer currentToken123",
+            "User-Agent": "axios/0.27.2"
+        },
+        "baseURL": "https://test-domain.my.salesforce.com",
+        "method": "get",
+        "url": "/services/data/v55.0/query/?q=SELECT+Id,Name+FROM+Account+WHERE+Name+=+5+LIMIT+5"
     },
-    "transformRequest": [
-      null
-    ],
-    "transformResponse": [
-      null
-    ],
-    "timeout": 0,
-    "xsrfCookieName": "XSRF-TOKEN",
-    "xsrfHeaderName": "X-XSRF-TOKEN",
-    "maxContentLength": -1,
-    "maxBodyLength": -1,
-    "env": {},
-    "headers": {
-      "Accept": "application/json",
-      "Authorization": "Bearer currentToken123",
-      "User-Agent": "axios/0.27.2"
+    "response": {
+        "data": [
+            {
+                "message": "\nSELECT Id,Name FROM Account WHERE Name = 5 LIMIT 5\n                                  ^\nERROR at Row:1:Column:35\nvalue of filter criterion for field 'Name' must be of type string and should be enclosed in quotes",
+                "errorCode": "INVALID_FIELD"
+            }
+        ]
     },
-    "baseURL": "https://test-domain.my.salesforce.com",
-    "method": "get",
-    "url": "/services/data/v55.0/query/?q=SELECT+Id,Name+FROM+Account+WHERE+Name+=+5+LIMIT+5"
-  },
-  "response": {
-    "data": [
-      {
-        "message": "\nSELECT Id,Name FROM Account WHERE Name = 5 LIMIT 5\n                                  ^\nERROR at Row:1:Column:35\nvalue of filter criterion for field 'Name' must be of type string and should be enclosed in quotes",
-        "errorCode": "INVALID_FIELD"
-      }
-    ]
-  }, 
-  "code": "ERR_BAD_REQUEST",
-  "status": 400
+    "code": "ERR_BAD_REQUEST",
+    "status": 400
 }

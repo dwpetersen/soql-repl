@@ -1,34 +1,34 @@
 {
-  "message": "getaddrinfo ENOTFOUND test-domain.my.salesforce.com",
-  "name": "Error",
-  "stack": "Error: getaddrinfo ENOTFOUND test-domain.my.salesforce.com\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:71:26)",
-  "config": {
-    "transitional": {
-      "silentJSONParsing": true,
-      "forcedJSONParsing": true,
-      "clarifyTimeoutError": false
+    "message": "getaddrinfo ENOTFOUND test-domain.my.salesforce.com",
+    "name": "Error",
+    "stack": "Error: getaddrinfo ENOTFOUND test-domain.my.salesforce.com\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:71:26)",
+    "config": {
+        "transitional": {
+            "silentJSONParsing": true,
+            "forcedJSONParsing": true,
+            "clarifyTimeoutError": false
+        },
+        "transformRequest": [
+            null
+        ],
+        "transformResponse": [
+            null
+        ],
+        "timeout": 0,
+        "xsrfCookieName": "XSRF-TOKEN",
+        "xsrfHeaderName": "X-XSRF-TOKEN",
+        "maxContentLength": -1,
+        "maxBodyLength": -1,
+        "env": {},
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Bearer currentToken123",
+            "User-Agent": "axios/0.27.2"
+        },
+        "baseURL": "https://test-domain.my.salesforce.com",
+        "method": "get",
+        "url": "/services/data/v55.0/query/?q=SELECT+Id,Name+FROM+Account+WHERE+Name+=+'Burlington%20Textiles%20Corp%20of%20America'+LIMIT+5"
     },
-    "transformRequest": [
-      null
-    ],
-    "transformResponse": [
-      null
-    ],
-    "timeout": 0,
-    "xsrfCookieName": "XSRF-TOKEN",
-    "xsrfHeaderName": "X-XSRF-TOKEN",
-    "maxContentLength": -1,
-    "maxBodyLength": -1,
-    "env": {},
-    "headers": {
-      "Accept": "application/json",
-      "Authorization": "Bearer currentToken123",
-      "User-Agent": "axios/0.27.2"
-    },
-    "baseURL": "https://test-domain.my.salesforce.com",
-    "method": "get",
-    "url": "/services/data/v55.0/query/?q=SELECT+Id,Name+FROM+Account+WHERE+Name+=+'Burlington%20Textiles%20Corp%20of%20America'+LIMIT+5"
-  },
-  "code": "ENOTFOUND",
-  "status": null
+    "code": "ENOTFOUND",
+    "status": null
 }
