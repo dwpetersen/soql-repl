@@ -62,7 +62,8 @@ export class SOQLQuery {
     private operandToString(operand: Operand) {
         let stringValue: string = '';
         if (typeof operand === 'string') {
-            stringValue = `'${operand}'`;
+            stringValue = operand.replaceAll('\'', '\\\'');
+            stringValue = `'${stringValue}'`;
         }
         else if (operand instanceof Date ||
                  typeof operand === 'number') {

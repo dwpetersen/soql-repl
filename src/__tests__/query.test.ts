@@ -73,6 +73,20 @@ describe('equals()', () => {
         const expectedOperand = `'${operand}'`;
         expect(query.whereItems.pop()).toBe(expectedOperand);
     });
+
+    test('escapes single quotes if operand is a string', () => {
+        //Given
+        const operand = `O'Donnell's Whisky`;
+
+        //When
+        const query = new SOQLQuery()
+                            .where('Name')
+                            .equals(operand);
+        
+        //Then
+        const expectedOperand = `'O\\'Donnell\\'s Whisky'`;
+        expect(query.whereItems.pop()).toBe(expectedOperand);
+    });
     
     test('converts operand to a string if it\'s a Date', () => {
         const operand = new Date('2000-01-01');
