@@ -32,92 +32,108 @@ test('from() sets fromValue to sObject', () => {
     expect(query.fromValue).toBe(sObject);
 });
 
-test('where() adds field to whereItems', () => {
-    const field = 'Id';
-    const query = new SOQLQuery();
-    query.where(field)
-    expect(query.whereItems).toContain(field);
+describe('where()', () => {
+    test('adds field to whereItems', () => {
+        const field = 'Id';
+        const query = new SOQLQuery();
+        query.where(field)
+        expect(query.whereItems).toContain(field);
+    });
+    
+    test('sets currentStatement to WHERE', () => {
+        const field = 'Id';
+        const query = new SOQLQuery();
+        query.where(field)
+        expect(query.currentStatement).toBe(Statements.WHERE);
+    });
 });
 
-test('where() sets currentStatement to WHERE', () => {
-    const field = 'Id';
-    const query = new SOQLQuery();
-    query.where(field)
-    expect(query.currentStatement).toBe(Statements.WHERE);
+describe('equals()', () => {
+    test('adds operand and "=" to whereItems when currentStatement == WHERE', () => {
+        const field = 'Number_of_dogs__c'
+        const operand = 5;
+        const query = new SOQLQuery();
+        query.where(field);
+        query.equals(operand);
+        expect(query.whereItems).toEqual([field, '=', operand.toString()]);
+    });
+    
+    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+        const operand = 'Name';
+        const query = new SOQLQuery();
+        query.equals(operand);
+        expect(query.whereItems.length).toBe(0);
+    });
+    
+    test('adds single quotes to operand if it\'s a string', () => {
+        const operand = 'John';
+        const query = new SOQLQuery()
+                            .where('Name')
+                            .equals(operand);
+        const expectedOperand = `'${operand}'`;
+        expect(query.whereItems.pop()).toBe(expectedOperand);
+    });
+    
+    test('converts operand to a string if it\'s a Date', () => {
+        const operand = new Date('2000-01-01');
+        const query = new SOQLQuery()
+                            .where('CreatedDate')
+                            .equals(operand);
+    
+        const expectedOperand = operand.toString();
+        expect(query.whereItems.pop()).toBe(expectedOperand);
+    });
+    
+    test('converts operand to a string if it\'s null', () => {
+        const operand = null;
+        const query = new SOQLQuery()
+                            .where('Color__c')
+                            .equals(operand);
+    
+        const expectedOperand = 'null';
+        expect(query.whereItems.pop()).toBe(expectedOperand);
+    });
 });
 
-test('equals() adds operand and "=" to whereItems when currentStatement = WHERE', () => {
-    const field = 'Number_of_dogs__c'
-    const operand = 5;
-    const query = new SOQLQuery();
-    query.where(field);
-    query.equals(operand);
-    expect(query.whereItems).toEqual([field, '=', operand.toString()]);
-});
+describe('notEquals()', () => {
+    test('adds single quotes to operand if it\'s a string', () => {
+        const operand = 'John';
+        const query = new SOQLQuery()
+                            .where('Name')
+                            .notEquals(operand);
+        const expectedOperand = `'${operand}'`;
+        expect(query.whereItems.pop()).toBe(expectedOperand);
+    });
 
-test('when currentStatement = WHERE equals() does not change whereItems', () => {
-    const operand = 'Name';
-    const query = new SOQLQuery();
-    query.equals(operand);
-    expect(query.whereItems.length).toBe(0);
-});
+    test('adds operand and "!=" to whereItems when currentStatement == WHERE', () => {
+        //Given
+        const field = 'Number_of_dogs__c'
+        const operand = 5;
+        const query = new SOQLQuery().select('Name', 'CreatedDate')
+                                     .from('Account')
+                                     .where(field);
 
-test('equals() adds single quotes to operand if it\'s a string', () => {
-    const operand = 'John';
-    const query = new SOQLQuery()
-                        .where('Name')
-                        .equals(operand);
-    const expectedOperand = `'${operand}'`;
-    expect(query.whereItems.pop()).toBe(expectedOperand);
-});
+        // When
+        query.notEquals(operand);
 
-test('equals() converts operand to a string if it\'s a Date', () => {
-    const operand = new Date('2000-01-01');
-    const query = new SOQLQuery()
-                        .where('CreatedDate')
-                        .equals(operand);
+        //Then
+        const expectedWhereItems = [field, '!=', operand.toString()]
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+    
+    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+        //Given
+        const field = 'Number_of_dogs__c'
+        const operand = 5;
+        const query = new SOQLQuery().select('Name', 'CreatedDate')
+                                     .from('Account');
+        const expectedWhereItems = [...query.whereItems];
+        
+        // When
+        query.notEquals(operand);
 
-    const expectedOperand = operand.toString();
-    expect(query.whereItems.pop()).toBe(expectedOperand);
-});
-
-test('equals() converts operand to a string if it\'s null', () => {
-    const operand = null;
-    const query = new SOQLQuery()
-                        .where('Color__c')
-                        .equals(operand);
-
-    const expectedOperand = 'null';
-    expect(query.whereItems.pop()).toBe(expectedOperand);
-});
-
-test('notEquals() adds single quotes to operand if it\'s a string', () => {
-    const operand = 'John';
-    const query = new SOQLQuery()
-                        .where('Name')
-                        .notEquals(operand);
-    const expectedOperand = `'${operand}'`;
-    expect(query.whereItems.pop()).toBe(expectedOperand);
-});
-
-test('notEquals() converts operand to a string if it\'s a Date', () => {
-    const operand = new Date('2000-01-01');
-    const query = new SOQLQuery()
-                        .where('CreatedDate')
-                        .notEquals(operand);
-
-    const expectedOperand = operand.toString();
-    expect(query.whereItems.pop()).toBe(expectedOperand);
-});
-
-test('notEquals() converts operand to a string if it\'s null', () => {
-    const operand = null;
-    const query = new SOQLQuery()
-                        .where('Color__c')
-                        .notEquals(operand);
-
-    const expectedOperand = 'null';
-    expect(query.whereItems.pop()).toBe(expectedOperand);
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
 });
 
 describe('in()', () => {
@@ -137,7 +153,7 @@ describe('in()', () => {
         expect(query.whereItems).toEqual(expectedWhereItems);
     });
 
-    test('when query is not in where clause, whereItems is unchanged', () => {
+    test('when currentStatement != WHERE, whereItems are unchanged', () => {
         //Given
         const field = 'Name';
         const operandArray = ['Hello', 'World'];
