@@ -103,6 +103,11 @@ export class SOQLQuery {
         return this;
     }
 
+    lessOrEqual(operand: Operand) {
+        this.handleOperator('<=', operand);
+        return this;
+    }
+
     in(...operandArray: Operand[]) {
         if (this.currentStatement === Statements.WHERE) {
             let innerValue = operandArray.map((operand) => {

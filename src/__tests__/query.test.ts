@@ -187,6 +187,38 @@ describe('lessThan()', () => {
     });
 });
 
+describe('lessOrEqual()', () => {
+    test('adds operand and "<=" to whereItems when currentStatement == WHERE', () => {
+        //Given
+        const field = 'Number_of_dogs__c';
+        const operand = 5;
+        const query = new SOQLQuery().select('Name', 'CreatedDate')
+                                     .from('Account')
+                                     .where(field);
+
+        // When
+        query.lessOrEqual(operand);
+
+        //Then
+        const expectedWhereItems = [field, '<=', operand.toString()]
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+    
+    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+        //Given
+        const field = 'Number_of_dogs__c';
+        const operand = 5;
+        const query = new SOQLQuery().select('Name', 'CreatedDate')
+                                     .from('Account');
+        const expectedWhereItems = [...query.whereItems];
+        
+        // When
+        query.lessOrEqual(operand);
+
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+});
+
 describe('in()', () => {
     test('adds IN operator and array string to whereItems', () => {
         //Given
