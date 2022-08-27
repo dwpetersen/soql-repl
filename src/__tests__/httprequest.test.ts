@@ -78,7 +78,7 @@ describe('get()', () => {
         const alias = factory.createAlias(new Date());
         const path = factory.createQueryPath();
     
-        const response = mocks.axios.get.error.notFound();
+        const response = mocks.axios.get.error.notFound(alias, path);
         mockGet.mockRejectedValue(response as AxiosError<any>);
     
         //When
@@ -100,7 +100,7 @@ describe('get()', () => {
         const alias = factory.createAlias(new Date());
         const path = factory.createQueryPath();
     
-        const response = mocks.axios.get.error.badRequest();
+        const response = mocks.axios.get.error.badRequest(alias, path);
         mockGet.mockRejectedValue(response as AxiosError<any>);
     
         //When

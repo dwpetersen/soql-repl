@@ -1,12 +1,13 @@
 import { readFileSync } from "fs";
 import { AxiosError } from "axios";
 import * as path from 'path';
+import { Alias } from "../../creds";
 
 const DATA_PATH = path.resolve('src', '__tests__', 'data');
 
 let axiosTemplates = new Map<string, any>();
 
-function createAxiosError(method: string, name: string, url?: string): AxiosError {
+function createAxiosError(alias: Alias, method: string, name: string, url: string): AxiosError {
     const key = `${method}.error.${name}`;
     let errorTemplate = axiosTemplates.get(key);
     if (!errorTemplate) {
@@ -15,17 +16,21 @@ function createAxiosError(method: string, name: string, url?: string): AxiosErro
         errorTemplate = JSON.parse(errorFile.toString());
         axiosTemplates.set(key, errorTemplate);
     }
-    const errorResponse = {...errorTemplate}
-    errorResponse.config.url = url ? url : errorResponse.config.url;
+    const errorResponse: AxiosError = {...errorTemplate} as AxiosError;
+    errorResponse.config.baseURL = alias.url;
+    if (errorResponse.config.headers) {
+        errorResponse.config.headers.Authorization = `Bearer ${alias.currentToken}`;
+    }
+    errorResponse.config.url = url;
     return errorResponse;
 }
 
 const getError = {
-    notFound: (url?: string): AxiosError => {
-        return createAxiosError('get', 'ENOTFOUND', url);
+    notFound: (alias: Alias, url: string): AxiosError => {
+        return createAxiosError(alias, 'get', 'ENOTFOUND', url);
     },
-    badRequest: (url?: string): AxiosError => {
-        return createAxiosError('get', 'ERR_BAD_REQUEST', url);
+    badRequest: (alias: Alias, url: string): AxiosError => {
+        return createAxiosError(alias, 'get', 'ERR_BAD_REQUEST', url);
     }
 }
 
