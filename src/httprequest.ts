@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import axios from 'axios';
 import { Alias } from './creds';
 import * as creds from './creds';
@@ -6,6 +6,10 @@ import * as creds from './creds';
 const TOKEN_TIMEOUT_MINS = 60;
 
 type AxiosGetParams = Parameters<typeof axios.get>;
+
+interface TokenResponseData {
+    access_token: string;
+}
 
 function getDefaultHeaders(alias: Alias) {
     return {
@@ -42,7 +46,7 @@ async function retry<T,P extends unknown[]>(request: (...args: [...P]) => Promis
         }
         catch (err) {
             if (err && typeof err === 'object' && 'response' in err) {
-                throw err;
+                throw err as AxiosError;
             }
         }
     }
@@ -58,9 +62,12 @@ export async function get<T = never>(alias: Alias, path: string, headers?: objec
     }
 
     const params: AxiosGetParams = [path, config];
+    const wrappedAxiosGet = (...args: AxiosGetParams) => {
+        return axios.get<T>(...args);
+    };
 
     await checkCurrentToken(alias);
-    const response = await retry(axios.get<T>, params);
+    const response = await retry(wrappedAxiosGet, params);
     alias.lastRequest = new Date();
     creds.saveAlias(alias);
     return response;
@@ -70,7 +77,7 @@ async function getAccessToken(alias: Alias) {
     const url = 'https://login.salesforce.com/services/oauth2/token';
     const data = buildFormData(alias);
 
-    const response = await axios.post(url, data);
+    const response: AxiosResponse<TokenResponseData> = await axios.post(url, data);
     return response.data.access_token;
 }
 
