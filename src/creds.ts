@@ -3,7 +3,7 @@ import * as path from 'path';
 
 export const CREDS_PATH = 'creds';
 
-export type Alias = {
+export interface Alias {
     name: string;
     url: string;
     clientId: string;
@@ -21,7 +21,7 @@ function getAliasPath(name: string) {
 
 export function openAlias(name: string) {
     const aliasFile = fs.readFileSync(getAliasPath(name));
-    const alias: Alias = JSON.parse(aliasFile.toString());
+    const alias = JSON.parse(aliasFile.toString()) as Alias;
     alias.lastRequest = alias.lastRequest ? new Date(alias.lastRequest) : undefined;
     return alias;
 } 
