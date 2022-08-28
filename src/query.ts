@@ -25,6 +25,8 @@ type Operator = '='|'!='|'<'|'<='|
                 '>'|'>='|'LIKE'|'IN'|
                 'NOT IN'|'INCLUDES'|'EXCLUDES';
 
+type LogicalOperator = 'AND'|'OR'|'NOT';
+
 type Operand = string|number|Date|null;
 
 export const QUERY_PATH = '/services/data/v55.0/query/?q=';
