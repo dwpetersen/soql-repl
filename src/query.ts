@@ -58,7 +58,7 @@ export class SOQLQuery {
 
     where(field: string) {
         this.currentStatement = Statements.WHERE;
-        this.whereItems.push(field);
+        this.whereItems.push(new FieldExpression(field));
         return this;
     }
 
@@ -103,7 +103,9 @@ export class SOQLQuery {
 
     private handleOperator(operator: CompOperator, operand: Operand) {
         if (this.currentStatement === Statements.WHERE) {
-            this.addExpression(operator, operand, this.whereItems);
+            const expression = this.whereItems[this.whereItems.length - 1] as FieldExpression;
+            expression.operator = operator;
+            expression.operand = operand;
         }
     }
 
