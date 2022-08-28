@@ -28,4 +28,4 @@ export function openAlias(name: string) {
 
 export function saveAlias(alias: Alias) {
     fs.writeFileSync(getAliasPath(alias.name), JSON.stringify(alias, null, 4));
-};
+}

@@ -5,6 +5,8 @@ import * as creds from './creds';
 
 const TOKEN_TIMEOUT_MINS = 60;
 
+type AxiosGetParams = Parameters<typeof axios.get>;
+
 function getDefaultHeaders(alias: Alias) {
     return {
         'Authorization': `Bearer ${alias.currentToken}`,
@@ -30,16 +32,16 @@ function buildFormData(alias: Alias) {
     return formData;
 }
 
-async function retry<T>(request: (...args: any) => Promise<any>,
-                        params: any[],
-                        retries: number = 3): Promise<T> {
+async function retry<T,P extends unknown[]>(request: (...args: [...P]) => Promise<T>,
+                        params: P,
+                        retries = 3) {
     for (let i = 0; i < retries; i++) {
         try {
             const response = await request(...params);
             return response;
         }
-        catch (err: any) {
-            if (err.response) {
+        catch (err) {
+            if (err && typeof err === 'object' && 'response' in err) {
                 throw err;
             }
         }
@@ -48,38 +50,28 @@ async function retry<T>(request: (...args: any) => Promise<any>,
     throw new Error(`Could not complete request. Maximum retries reached (${retries}).`);
 }
 
-export async function get<T = any>(alias: Alias, path: string, headers?: object): Promise<AxiosResponse<T>> {
+export async function get<T = never>(alias: Alias, path: string, headers?: object): Promise<AxiosResponse<T>> {
     const defaultHeaders = getDefaultHeaders(alias);
     const config = {
         baseURL: alias.url,
         headers: { ...defaultHeaders, ...headers }
     }
 
-    const params = [path, config];
+    const params: AxiosGetParams = [path, config];
 
-    try {
-        await checkCurrentToken(alias);
-        const response = await retry<AxiosResponse<T>>(axios.get<T>, params);
-        alias.lastRequest = new Date();
-        creds.saveAlias(alias);
-        return response;
-    }
-    catch (err) {
-        throw err;
-    }
+    await checkCurrentToken(alias);
+    const response = await retry(axios.get<T>, params);
+    alias.lastRequest = new Date();
+    creds.saveAlias(alias);
+    return response;
 }
 
 async function getAccessToken(alias: Alias) {
-    try {
-        const url = 'https://login.salesforce.com/services/oauth2/token';
-        const data = buildFormData(alias);
+    const url = 'https://login.salesforce.com/services/oauth2/token';
+    const data = buildFormData(alias);
 
-        const response = await axios.post(url, data);
-        return response.data.access_token;
-    }
-    catch(error) {
-        throw error;
-    }
+    const response = await axios.post(url, data);
+    return response.data.access_token;
 }
 
 function isTokenExpired(alias: Alias) {
@@ -99,14 +91,9 @@ async function checkCurrentToken(alias: Alias) {
     }
     if (!validToken) {
         console.log(`Setting currentToken...`);
-        try {
-            const token = await getAccessToken(alias);
-            alias.currentToken = token;
-            alias.lastRequest = new Date();
-            creds.saveAlias(alias);
-        }
-        catch (error) {
-            throw error;
-        }         
+        const token = await getAccessToken(alias);
+        alias.currentToken = token;
+        alias.lastRequest = new Date();
+        creds.saveAlias(alias);       
     }
 }
