@@ -1,5 +1,4 @@
 import { Alias } from "../../creds";
-import * as path from 'path';
 
 export function createQueryResponse() {
     return { 
