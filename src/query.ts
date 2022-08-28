@@ -160,6 +160,13 @@ export class SOQLQuery {
         return this;
     }
 
+    or(field: string) {
+        if (this.currentStatement === Statements.WHERE) {
+            this.whereItems.push('OR', field);
+        }
+        return this;
+    }
+
     limit(value: number) {
         this.limitValue = value;
         return this;

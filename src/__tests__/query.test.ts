@@ -473,6 +473,38 @@ describe('and()', () => {
     });
 });
 
+describe('or()', () => {
+    test('if currentStatement == WHERE, adds "OR" and field to whereItems', () => {
+        //Given
+        const field = 'Industry';
+        const query = new SOQLQuery().select('Id', 'Name')
+                                     .from('Account')
+                                     .where('Name')
+                                     .like('Edge%');
+
+        //When
+        query.or(field);
+
+        //Then
+        expect(query.whereItems.pop()).toBe(field);
+        expect(query.whereItems.pop()).toBe('OR');
+    });
+
+    test('if currentStatement != WHERE, whereItems is unchanged', () => {
+        //Given
+        const field = 'Industry';
+        const query = new SOQLQuery().select('Id', 'Name')
+                                     .from('Account')
+        const expectedWhereItems = [...query.whereItems];
+
+        //When
+        query.or(field);
+
+        //Then
+        expect(query.whereItems).toEqual(expectedWhereItems);
+    });
+});
+
 test('limit() sets limitValue to value', () => {
     const value = 5;
     const query = new SOQLQuery()
