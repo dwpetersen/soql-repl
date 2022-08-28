@@ -1,9 +1,8 @@
 import * as creds from './creds';
-import * as httpRequest from './httprequest';
 import { SOQLQuery, SOQLQueryResult } from './query'
 import { settings } from './settings';
 
-let currentAlias = creds.openAlias(settings.defaultAlias);
+const currentAlias = creds.openAlias(settings.defaultAlias);
 
 export const getAccounts = async (): Promise<SOQLQueryResult | undefined> => {
     const accountQuery = new SOQLQuery();
