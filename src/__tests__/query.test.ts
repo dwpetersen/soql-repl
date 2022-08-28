@@ -142,7 +142,6 @@ describe('notEquals()', () => {
     
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
         //Given
-        const field = 'Number_of_dogs__c';
         const operand = 5;
         const query = new SOQLQuery().select('Name', 'CreatedDate')
                                      .from('Account');
@@ -174,7 +173,6 @@ describe('lessThan()', () => {
     
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
         //Given
-        const field = 'Number_of_dogs__c';
         const operand = 5;
         const query = new SOQLQuery().select('Name', 'CreatedDate')
                                      .from('Account');
@@ -206,7 +204,6 @@ describe('lessOrEqual()', () => {
     
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
         //Given
-        const field = 'Number_of_dogs__c';
         const operand = 5;
         const query = new SOQLQuery().select('Name', 'CreatedDate')
                                      .from('Account');
@@ -238,7 +235,6 @@ describe('greaterThan()', () => {
     
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
         //Given
-        const field = 'Number_of_dogs__c';
         const operand = 5;
         const query = new SOQLQuery().select('Name', 'CreatedDate')
                                      .from('Account');
@@ -270,7 +266,6 @@ describe('greaterOrEqual()', () => {
     
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
         //Given
-        const field = 'Number_of_dogs__c';
         const operand = 5;
         const query = new SOQLQuery().select('Name', 'CreatedDate')
                                      .from('Account');
@@ -302,7 +297,6 @@ describe('in()', () => {
 
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
         //Given
-        const field = 'Name';
         const operandArray = ['Hello', 'World'];
         
         const query = new SOQLQuery().select('Name', 'CreatedDate')
@@ -336,7 +330,6 @@ describe('notIn()', () => {
 
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
         //Given
-        const field = 'Name';
         const operandArray = ['Hello', 'World'];
         
         const query = new SOQLQuery().select('Name', 'CreatedDate')
@@ -370,7 +363,6 @@ describe('like()', () => {
     
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
         //Given
-        const field = 'Name';
         const operand = 'Hello%';
         const query = new SOQLQuery().select('Name', 'CreatedDate')
                                      .from('Account');
@@ -402,7 +394,6 @@ describe('includes()', () => {
 
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
         //Given
-        const field = 'Industries__c';
         const operandArray = ['IT', 'Government'];
         
         const query = new SOQLQuery().select('Id','Name', 'Industries__c')
@@ -436,7 +427,6 @@ describe('excludes()', () => {
 
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
         //Given
-        const field = 'Industries__c';
         const operandArray = ['IT', 'Government'];
         
         const query = new SOQLQuery().select('Id','Name', 'Industries__c')
@@ -496,7 +486,7 @@ test('execute() returns response when path is set', async () => {
         }
     };
     
-    mockedGet.mockResolvedValue(response as AxiosResponse<any>);
+    mockedGet.mockResolvedValue(response as AxiosResponse);
 
     await query.execute(alias);
     expect(query.result).toEqual(response.data);
