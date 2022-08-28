@@ -21,13 +21,21 @@ export enum Statements {
     LIMIT
 }
 
-type Operator = '='|'!='|'<'|'<='|
+type CompOperator = '='|'!='|'<'|'<='|
                 '>'|'>='|'LIKE'|'IN'|
                 'NOT IN'|'INCLUDES'|'EXCLUDES';
 
 type LogicalOperator = 'AND'|'OR'|'NOT';
 
+type Operator = CompOperator|LogicalOperator
+
 type Operand = string|number|Date|null;
+
+interface FieldExpression {
+    field: string;
+    operator?: Operator;
+    operand?: Operand;
+}
 
 export const QUERY_PATH = '/services/data/v55.0/query/?q=';
 export const ERROR_PATH_MUST_BE_SET = 'Path must be set on SOQLQuery'
@@ -58,6 +66,10 @@ export class SOQLQuery {
         return this;
     }
 
+    private expandWhereItems() {
+        return this.whereItems;
+    }
+
     private operandToString(operand: Operand) {
         let stringValue = '';
         if (typeof operand === 'string') {
@@ -79,18 +91,18 @@ export class SOQLQuery {
         return stringValue;
     }
 
-    private addExpression(operator: Operator, operand: Operand, itemList: unknown[]) {
+    private addExpression(operator: CompOperator, operand: Operand, itemList: unknown[]) {
         const stringValue = this.operandToString(operand);
         itemList.push(operator, stringValue);
     }
 
-    private handleOperator(operator: Operator, operand: Operand) {
+    private handleOperator(operator: CompOperator, operand: Operand) {
         if (this.currentStatement === Statements.WHERE) {
             this.addExpression(operator, operand, this.whereItems);
         }
     }
 
-    private handleArrayOperation(operator: Operator, operandArray: Operand[]) {
+    private handleArrayOperation(operator: CompOperator, operandArray: Operand[]) {
         if (this.currentStatement === Statements.WHERE) {
             const innerValue = operandArray.map(e => this.operandToString(e))
                                            .join(',');
@@ -178,7 +190,7 @@ export class SOQLQuery {
                                  'FROM',
                                  this.fromValue,
                                  'WHERE',
-                                 ...this.whereItems,
+                                 ...this.expandWhereItems(),
                                  'LIMIT',
                                  this.limitValue].join('+'));
         this.path = QUERY_PATH + this.paramString;
