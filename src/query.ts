@@ -34,16 +34,13 @@ export const ERROR_PATH_MUST_BE_SET = 'Path must be set on SOQLQuery'
 
 export class SOQLQuery {
     selectItems: string[] = [];
-    fromValue: string = '';
+    fromValue = '';
     whereItems: string[] = [];
     limitValue?: number;
     paramString?: string;
     path?: string;
     result?: SOQLQueryResult;
     currentStatement?: Statements;
-
-    constructor() {
-    }
 
     select(...fields: string[]) {
         this.selectItems.push(...fields);
@@ -62,7 +59,7 @@ export class SOQLQuery {
     }
 
     private operandToString(operand: Operand) {
-        let stringValue: string = '';
+        let stringValue = '';
         if (typeof operand === 'string') {
             stringValue = operand.replaceAll('\\', '\\\\')
                                  .replaceAll('\'', '\\\'');
@@ -79,8 +76,8 @@ export class SOQLQuery {
         return stringValue;
     }
 
-    private addExpression(operator: Operator, operand: Operand, itemList: any[]) {
-        let stringValue = this.operandToString(operand);
+    private addExpression(operator: Operator, operand: Operand, itemList: unknown[]) {
+        const stringValue = this.operandToString(operand);
         itemList.push(...[operator, stringValue]);
     }
 
@@ -122,7 +119,7 @@ export class SOQLQuery {
 
     in(...operandArray: Operand[]) {
         if (this.currentStatement === Statements.WHERE) {
-            let innerValue = operandArray.map(this.operandToString)
+            const innerValue = operandArray.map(this.operandToString)
                                          .join(',');
             this.whereItems.push(...['IN', `(${innerValue})`]);
         }
@@ -131,7 +128,7 @@ export class SOQLQuery {
 
     notIn(...operandArray: Operand[]) {
         if (this.currentStatement === Statements.WHERE) {
-            let innerValue = operandArray.map(this.operandToString)
+            const innerValue = operandArray.map(this.operandToString)
                                          .join(',');
             this.whereItems.push(...['NOT IN', `(${innerValue})`]);
         }
@@ -145,7 +142,7 @@ export class SOQLQuery {
 
     includes(...operandArray: string[]) {
         if (this.currentStatement === Statements.WHERE) {
-            let innerValue = operandArray.map(this.operandToString)
+            const innerValue = operandArray.map(this.operandToString)
                                          .join(',');
             this.whereItems.push(...['INCLUDES', `(${innerValue})`]);
         }
@@ -154,7 +151,7 @@ export class SOQLQuery {
 
     excludes(...operandArray: string[]) {
         if (this.currentStatement === Statements.WHERE) {
-            let innerValue = operandArray.map(this.operandToString)
+            const innerValue = operandArray.map(this.operandToString)
                                          .join(',');
             this.whereItems.push(...['EXCLUDES', `(${innerValue})`]);
         }
