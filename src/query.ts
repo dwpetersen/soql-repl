@@ -1,11 +1,11 @@
 import { Alias } from './creds'
 import * as httpRequest from './httprequest';
 
-export type SOQLQueryResult = {
+export interface SOQLQueryResult {
     totalSize: number;
     done: boolean;
     records: SObject[];
-};
+}
 
 export interface SObject {
     attributes: {
@@ -69,6 +69,9 @@ export class SOQLQuery {
                  typeof operand === 'number') {
             stringValue = operand.toString();
         }
+        // disabled this lint because value is passed in from javascript
+        // not typescript
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         else if (operand === null) {
             stringValue = 'null';
         }
@@ -84,6 +87,14 @@ export class SOQLQuery {
     private handleOperator(operator: Operator, operand: Operand) {
         if (this.currentStatement === Statements.WHERE) {
             this.addExpression(operator, operand, this.whereItems);
+        }
+    }
+
+    private handleArrayOperation(operator: Operator, operandArray: Operand[]) {
+        if (this.currentStatement === Statements.WHERE) {
+            const innerValue = operandArray.map(e => this.operandToString(e))
+                                           .join(',');
+            this.whereItems.push(...[operator, `(${innerValue})`]);
         }
     }
 
@@ -118,20 +129,12 @@ export class SOQLQuery {
     }
 
     in(...operandArray: Operand[]) {
-        if (this.currentStatement === Statements.WHERE) {
-            const innerValue = operandArray.map(this.operandToString)
-                                         .join(',');
-            this.whereItems.push(...['IN', `(${innerValue})`]);
-        }
+        this.handleArrayOperation('IN', operandArray);
         return this;
     }
 
     notIn(...operandArray: Operand[]) {
-        if (this.currentStatement === Statements.WHERE) {
-            const innerValue = operandArray.map(this.operandToString)
-                                         .join(',');
-            this.whereItems.push(...['NOT IN', `(${innerValue})`]);
-        }
+        this.handleArrayOperation('NOT IN', operandArray);
         return this;
     }
 
@@ -141,20 +144,12 @@ export class SOQLQuery {
     }
 
     includes(...operandArray: string[]) {
-        if (this.currentStatement === Statements.WHERE) {
-            const innerValue = operandArray.map(this.operandToString)
-                                         .join(',');
-            this.whereItems.push(...['INCLUDES', `(${innerValue})`]);
-        }
+        this.handleArrayOperation('INCLUDES', operandArray);
         return this;
     }
 
     excludes(...operandArray: string[]) {
-        if (this.currentStatement === Statements.WHERE) {
-            const innerValue = operandArray.map(this.operandToString)
-                                         .join(',');
-            this.whereItems.push(...['EXCLUDES', `(${innerValue})`]);
-        }
+        this.handleArrayOperation('EXCLUDES', operandArray);
         return this;
     }
 
