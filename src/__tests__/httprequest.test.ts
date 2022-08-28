@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import * as httpRequest from '../httprequest';
 import axios from 'axios';
-import { AxiosResponse, AxiosError } from 'axios';
+import { AxiosResponse } from 'axios';
 import * as fs from 'fs';
 import * as factory from './utils/factory';
 import * as mocks from './utils/mocks';
@@ -79,7 +80,7 @@ describe('get()', () => {
         const path = factory.createQueryPath();
     
         const response = mocks.axios.get.error.notFound(alias, path);
-        mockGet.mockRejectedValue(response as AxiosError);
+        mockGet.mockRejectedValue(response);
     
         //When
         let isError = false;
@@ -101,7 +102,7 @@ describe('get()', () => {
         const path = factory.createQueryPath();
     
         const response = mocks.axios.get.error.badRequest(alias, path);
-        mockGet.mockRejectedValue(response as AxiosError);
+        mockGet.mockRejectedValue(response);
     
         //When
         let isError = false;
