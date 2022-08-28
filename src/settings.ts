@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-interface Settings {
+export interface Settings {
     defaultAlias: string
 }
 
