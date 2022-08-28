@@ -81,7 +81,7 @@ export class SOQLQuery {
 
     private addExpression(operator: Operator, operand: Operand, itemList: unknown[]) {
         const stringValue = this.operandToString(operand);
-        itemList.push(...[operator, stringValue]);
+        itemList.push(operator, stringValue);
     }
 
     private handleOperator(operator: Operator, operand: Operand) {
@@ -94,7 +94,7 @@ export class SOQLQuery {
         if (this.currentStatement === Statements.WHERE) {
             const innerValue = operandArray.map(e => this.operandToString(e))
                                            .join(',');
-            this.whereItems.push(...[operator, `(${innerValue})`]);
+            this.whereItems.push(operator, `(${innerValue})`);
         }
     }
 
@@ -150,6 +150,13 @@ export class SOQLQuery {
 
     excludes(...operandArray: string[]) {
         this.handleArrayOperation('EXCLUDES', operandArray);
+        return this;
+    }
+
+    and(field: string) {
+        if (this.currentStatement === Statements.WHERE) {
+            this.whereItems.push('AND', field);
+        }
         return this;
     }
 
