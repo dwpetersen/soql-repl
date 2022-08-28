@@ -1,8 +1,6 @@
 import { Alias } from "../../creds";
 import * as path from 'path';
 
-const DATA_PATH = path.resolve('src', '__tests__', 'data');
-
 export function createQueryResponse() {
     return { 
         data: {
