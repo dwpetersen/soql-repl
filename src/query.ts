@@ -31,19 +31,15 @@ type Operator = CompOperator|LogicalOperator
 
 type Operand = string|number|Date|null;
 
-interface FieldExpression {
-    field: string;
-    operator?: Operator;
-    operand?: Operand;
-}
+type WhereItem = string|FieldExpression
 
 export const QUERY_PATH = '/services/data/v55.0/query/?q=';
-export const ERROR_PATH_MUST_BE_SET = 'Path must be set on SOQLQuery'
+export const ERROR_PATH_MUST_BE_SET = 'Path must be set on SOQLQuery';
 
 export class SOQLQuery {
     selectItems: string[] = [];
     fromValue = '';
-    whereItems: string[] = [];
+    whereItems: WhereItem[] = [];
     limitValue?: number;
     paramString?: string;
     path?: string;
@@ -67,7 +63,16 @@ export class SOQLQuery {
     }
 
     private expandWhereItems() {
-        return this.whereItems;
+        const expandedItems: string[] = [];
+        this.whereItems.forEach(e => {
+            if (e instanceof FieldExpression) {
+                expandedItems.push(...e.expand());
+            }
+            else {
+                expandedItems.push(e);
+            }
+        });
+        return expandedItems;
     }
 
     private operandToString(operand: Operand) {
@@ -205,5 +210,47 @@ export class SOQLQuery {
         else {
             throw new Error(ERROR_PATH_MUST_BE_SET);
         }
+    }
+}
+
+class FieldExpression {
+    field: string;
+    operator?: Operator;
+    operand?: Operand;
+
+    constructor(field: string) {
+        this.field = field;
+    }
+
+    private operandToString() {
+        let stringValue = '';
+        if (typeof this.operand === 'string') {
+            stringValue = this.operand.replaceAll('\\', '\\\\')
+                                 .replaceAll('\'', '\\\'');
+            stringValue = `'${stringValue}'`;
+        }
+        else if (this.operand instanceof Date ||
+                 typeof this.operand === 'number') {
+            stringValue = this.operand.toString();
+        }
+        // disabled this lint because value is passed in from javascript
+        // not typescript
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        else if (this.operand === null) {
+            stringValue = 'null';
+        }
+
+        return stringValue;
+    }
+
+    expand(): string[] {
+        const expandedExpression: string[] = [this.field];
+        if(this.operator) {
+            expandedExpression.push(this.operator);
+        }
+        if(this.operand !== undefined) {
+            expandedExpression.push(this.operandToString());
+        }
+        return expandedExpression;
     }
 }
