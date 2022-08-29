@@ -215,7 +215,7 @@ export class SOQLQuery {
     }
 }
 
-class FieldExpression {
+export class FieldExpression {
     field: string;
     operator?: Operator;
     operand?: Operand;

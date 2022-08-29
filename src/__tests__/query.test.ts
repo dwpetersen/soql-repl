@@ -1,6 +1,6 @@
 import * as httpRequest from '../httprequest';
 import { Alias } from '../creds';
-import { ERROR_PATH_MUST_BE_SET, QUERY_PATH, SOQLQuery, Statements } from '../query';
+import { ERROR_PATH_MUST_BE_SET, QUERY_PATH, SOQLQuery, Statements, FieldExpression } from '../query';
 import { AxiosResponse } from 'axios';
 
 jest.mock('../httprequest');
@@ -33,35 +33,58 @@ test('from() sets fromValue to sObject', () => {
 });
 
 describe('where()', () => {
-    test('adds field to whereItems', () => {
+    test('adds new FieldExpression to whereItems', () => {
+        // Given
         const field = 'Id';
         const query = new SOQLQuery();
+
+        // When
         query.where(field)
-        expect(query.whereItems).toContain(field);
+
+        // Then
+        const expectedValue = new FieldExpression(field);
+        expect(query.whereItems.pop()).toEqual(expectedValue);
     });
     
     test('sets currentStatement to WHERE', () => {
+        // Given
         const field = 'Id';
         const query = new SOQLQuery();
+
+        // When
         query.where(field)
+
+        // Then
         expect(query.currentStatement).toBe(Statements.WHERE);
     });
 });
 
 describe('equals()', () => {
-    test('adds operand and "=" to whereItems when currentStatement == WHERE', () => {
+    test('sets operand and "=" on last FieldExpression in whereItems when currentStatement == WHERE', () => {
+        // Given
         const field = 'Number_of_dogs__c'
         const operand = 5;
-        const query = new SOQLQuery();
-        query.where(field);
+        const query = new SOQLQuery().where(field);
+
+        // When
         query.equals(operand);
-        expect(query.whereItems).toEqual([field, '=', operand.toString()]);
+
+        // Then
+        const expectedValue = new FieldExpression(field);
+        expectedValue.operand = operand;
+        expectedValue.operator = '='
+        expect(query.whereItems.pop()).toEqual(expectedValue);
     });
     
-    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+    test('when currentStatement != WHERE, whereItems is unchanged', () => {
+        // Given
         const operand = 'Name';
         const query = new SOQLQuery();
+
+        // When
         query.equals(operand);
+
+        // Then
         expect(query.whereItems.length).toBe(0);
     });
     
@@ -124,7 +147,7 @@ describe('equals()', () => {
 });
 
 describe('notEquals()', () => {
-    test('adds operand and "!=" to whereItems when currentStatement == WHERE', () => {
+    test('sets operand and "!=" on last FieldExpression in whereItems  when currentStatement == WHERE', () => {
         //Given
         const field = 'Number_of_dogs__c';
         const operand = 5;
@@ -136,11 +159,12 @@ describe('notEquals()', () => {
         query.notEquals(operand);
 
         //Then
-        const expectedWhereItems = [field, '!=', operand.toString()]
-        expect(query.whereItems).toEqual(expectedWhereItems);
+        const fieldExp = query.whereItems.pop() as FieldExpression;
+        expect(fieldExp.operator).toBe('!=');
+        expect(fieldExp.operand).toBe(operand);
     });
     
-    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+    test('when currentStatement != WHERE, whereItems is unchanged', () => {
         //Given
         const operand = 5;
         const query = new SOQLQuery().select('Name', 'CreatedDate')
@@ -166,12 +190,13 @@ describe('lessThan()', () => {
         // When
         query.lessThan(operand);
 
-        //Then
-        const expectedWhereItems = [field, '<', operand.toString()]
-        expect(query.whereItems).toEqual(expectedWhereItems);
+        // Then
+        const fieldExp = query.whereItems.pop() as FieldExpression;
+        expect(fieldExp.operator).toBe('<');
+        expect(fieldExp.operand).toBe(operand);
     });
     
-    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+    test('when currentStatement != WHERE, whereItems is unchanged', () => {
         //Given
         const operand = 5;
         const query = new SOQLQuery().select('Name', 'CreatedDate')
@@ -198,11 +223,12 @@ describe('lessOrEqual()', () => {
         query.lessOrEqual(operand);
 
         //Then
-        const expectedWhereItems = [field, '<=', operand.toString()]
-        expect(query.whereItems).toEqual(expectedWhereItems);
+        const fieldExp = query.whereItems.pop() as FieldExpression;
+        expect(fieldExp.operator).toBe('<=');
+        expect(fieldExp.operand).toBe(operand);
     });
     
-    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+    test('when currentStatement != WHERE, whereItems is unchanged', () => {
         //Given
         const operand = 5;
         const query = new SOQLQuery().select('Name', 'CreatedDate')
@@ -228,9 +254,10 @@ describe('greaterThan()', () => {
         // When
         query.greaterThan(operand);
 
-        //Then
-        const expectedWhereItems = [field, '>', operand.toString()]
-        expect(query.whereItems).toEqual(expectedWhereItems);
+        // Then
+        const fieldExp = query.whereItems.pop() as FieldExpression;
+        expect(fieldExp.operator).toBe('>');
+        expect(fieldExp.operand).toBe(operand);
     });
     
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
@@ -260,8 +287,9 @@ describe('greaterOrEqual()', () => {
         query.greaterOrEqual(operand);
 
         //Then
-        const expectedWhereItems = [field, '>=', operand.toString()]
-        expect(query.whereItems).toEqual(expectedWhereItems);
+        const fieldExp = query.whereItems.pop() as FieldExpression;
+        expect(fieldExp.operator).toBe('>=');
+        expect(fieldExp.operand).toBe(operand);
     });
     
     test('when currentStatement != WHERE, whereItems are unchanged', () => {
