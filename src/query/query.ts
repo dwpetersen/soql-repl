@@ -67,7 +67,7 @@ export class SOQLQuery {
         return expandedItems;
     }
 
-    private handleOperator(operator: ComparisonOperator, operand: Operand|Operand[]) {
+    private handleOperation(operator: ComparisonOperator, operand: Operand|Operand[]) {
         if (this.currentStatement === Statements.WHERE) {
             const expression = this.whereItems[this.whereItems.length - 1] as FieldExpression;
             expression.operator = operator;
@@ -76,57 +76,57 @@ export class SOQLQuery {
     }
 
     equals(operand: Operand) {
-        this.handleOperator('=', operand);
+        this.handleOperation('=', operand);
         return this;
     }
 
     notEquals(operand: Operand) {
-        this.handleOperator('!=', operand);
+        this.handleOperation('!=', operand);
         return this;
     }
 
     lessThan(operand: Operand) {
-        this.handleOperator('<', operand);
+        this.handleOperation('<', operand);
         return this;
     }
 
     lessOrEqual(operand: Operand) {
-        this.handleOperator('<=', operand);
+        this.handleOperation('<=', operand);
         return this;
     }
 
     greaterThan(operand: Operand) {
-        this.handleOperator('>', operand);
+        this.handleOperation('>', operand);
         return this;
     }
 
     greaterOrEqual(operand: Operand) {
-        this.handleOperator('>=', operand);
+        this.handleOperation('>=', operand);
         return this;
     }
 
     in(...operandArray: Operand[]) {
-        this.handleOperator('IN', operandArray);
+        this.handleOperation('IN', operandArray);
         return this;
     }
 
     notIn(...operandArray: Operand[]) {
-        this.handleOperator('NOT IN', operandArray);
+        this.handleOperation('NOT IN', operandArray);
         return this;
     }
 
     like(operand: string) {
-        this.handleOperator('LIKE', operand);
+        this.handleOperation('LIKE', operand);
         return this;
     }
 
     includes(...operandArray: string[]) {
-        this.handleOperator('INCLUDES', operandArray);
+        this.handleOperation('INCLUDES', operandArray);
         return this;
     }
 
     excludes(...operandArray: string[]) {
-        this.handleOperator('EXCLUDES', operandArray);
+        this.handleOperation('EXCLUDES', operandArray);
         return this;
     }
 
