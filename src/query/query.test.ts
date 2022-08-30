@@ -1,7 +1,7 @@
 import * as httpRequest from '../httprequest';
 import { Alias } from '../creds';
-import { ERROR_PATH_MUST_BE_SET, QUERY_PATH, SOQLQuery, Statements } from '../query/query';
-import { FieldExpression } from '../query/field-expression';
+import { ERROR_PATH_MUST_BE_SET, QUERY_PATH, SOQLQuery, Statements } from './query';
+import { FieldExpression } from './field-expression';
 import { AxiosResponse } from 'axios';
 
 jest.mock('../httprequest');
