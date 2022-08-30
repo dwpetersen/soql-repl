@@ -1,7 +1,7 @@
 import { Alias } from '../creds'
 import * as httpRequest from '../httprequest';
 import { FieldExpression } from './field-expression';
-import { CompOperator, Operand } from './types';
+import { ComparsionOperator as ComparisonOperator, Operand } from './types';
 
 export interface SOQLQueryResult {
     totalSize: number;
@@ -88,12 +88,12 @@ export class SOQLQuery {
         return stringValue;
     }
 
-    private addExpression(operator: CompOperator, operand: Operand, itemList: unknown[]) {
+    private addExpression(operator: ComparisonOperator, operand: Operand, itemList: unknown[]) {
         const stringValue = this.operandToString(operand);
         itemList.push(operator, stringValue);
     }
 
-    private handleOperator(operator: CompOperator, operand: Operand|Operand[]) {
+    private handleOperator(operator: ComparisonOperator, operand: Operand|Operand[]) {
         if (this.currentStatement === Statements.WHERE) {
             const expression = this.whereItems[this.whereItems.length - 1] as FieldExpression;
             expression.operator = operator;
