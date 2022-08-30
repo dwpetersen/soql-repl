@@ -10,7 +10,8 @@ export type DateLiteral = 'YESTERDAY'|'TODAY'|'TOMORROW'|
                           'NEXT_YEAR'|'THIS_FISCAL_QUARTER'|'LAST_FISCAL_QUARTER'|
                           'NEXT_FISCAL_QUARTER'|'THIS_FISCAL_YEAR'|'NEXT_FISCAL_YEAR';
 
-export function isDateLiteral(value: string): value is DateLiteral {
+export function isDateLiteral(value: unknown): value is DateLiteral {
+    const stringValue = value as string;
     const options = new Set(['YESTERDAY','TODAY','TOMORROW',
                              'LAST_WEEK','THIS_WEEK','NEXT_WEEK',
                              'LAST_MONTH','THIS_MONTH','NEXT_MONTH',
@@ -18,7 +19,7 @@ export function isDateLiteral(value: string): value is DateLiteral {
                              'LAST_QUARTER','NEXT_QUARTER','THIS_YEAR',
                              'NEXT_YEAR','THIS_FISCAL_QUARTER','LAST_FISCAL_QUARTER',
                              'NEXT_FISCAL_QUARTER','THIS_FISCAL_YEAR','NEXT_FISCAL_YEAR']);
-    return options.has(value);
+    return options.has(stringValue);
 }
 
 export type LogicalOperator = 'AND'|'OR'|'NOT';

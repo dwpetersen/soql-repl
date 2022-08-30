@@ -1,4 +1,4 @@
-import { Operand, Operator } from "./types";
+import { isDateLiteral, Operand, Operator } from "./types";
 
 export class FieldExpression {
     field: string;
@@ -12,6 +12,9 @@ export class FieldExpression {
     private operandToString(operand?: Operand) {
         const operandToConvert = operand ? operand : this.operand;
         let stringValue = '';
+        if(isDateLiteral(operandToConvert)) {
+            stringValue = operandToConvert;
+        }
         if (typeof operandToConvert === 'string') {
             stringValue = operandToConvert.replaceAll('\\', '\\\\')
                                  .replaceAll('\'', '\\\'');
