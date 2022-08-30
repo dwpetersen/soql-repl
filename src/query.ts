@@ -101,7 +101,7 @@ export class SOQLQuery {
         itemList.push(operator, stringValue);
     }
 
-    private handleOperator(operator: CompOperator, operand: Operand) {
+    private handleOperator(operator: CompOperator, operand: Operand|Operand[]) {
         if (this.currentStatement === Statements.WHERE) {
             const expression = this.whereItems[this.whereItems.length - 1] as FieldExpression;
             expression.operator = operator;
@@ -148,12 +148,12 @@ export class SOQLQuery {
     }
 
     in(...operandArray: Operand[]) {
-        this.handleArrayOperation('IN', operandArray);
+        this.handleOperator('IN', operandArray);
         return this;
     }
 
     notIn(...operandArray: Operand[]) {
-        this.handleArrayOperation('NOT IN', operandArray);
+        this.handleOperator('NOT IN', operandArray);
         return this;
     }
 
@@ -163,12 +163,12 @@ export class SOQLQuery {
     }
 
     includes(...operandArray: string[]) {
-        this.handleArrayOperation('INCLUDES', operandArray);
+        this.handleOperator('INCLUDES', operandArray);
         return this;
     }
 
     excludes(...operandArray: string[]) {
-        this.handleArrayOperation('EXCLUDES', operandArray);
+        this.handleOperator('EXCLUDES', operandArray);
         return this;
     }
 
@@ -218,27 +218,33 @@ export class SOQLQuery {
 export class FieldExpression {
     field: string;
     operator?: Operator;
-    operand?: Operand;
+    operand?: Operand|Operand[];
 
     constructor(field: string) {
         this.field = field;
     }
 
-    private operandToString() {
+    private operandToString(operand?: Operand) {
+        const operandToConvert = operand ? operand : this.operand;
         let stringValue = '';
-        if (typeof this.operand === 'string') {
-            stringValue = this.operand.replaceAll('\\', '\\\\')
+        if (typeof operandToConvert === 'string') {
+            stringValue = operandToConvert.replaceAll('\\', '\\\\')
                                  .replaceAll('\'', '\\\'');
             stringValue = `'${stringValue}'`;
         }
-        else if (this.operand instanceof Date ||
-                 typeof this.operand === 'number') {
-            stringValue = this.operand.toString();
+        else if (operandToConvert instanceof Date ||
+                 typeof operandToConvert === 'number') {
+            stringValue = operandToConvert.toString();
+        }
+        else if (Array.isArray(operandToConvert)) {
+            const innerValue = operandToConvert.map(e => this.operandToString(e))
+                                           .join(',');
+            stringValue = `(${innerValue})`;
         }
         // disabled this lint because value is passed in from javascript
         // not typescript
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        else if (this.operand === null) {
+        else if (operandToConvert === null) {
             stringValue = 'null';
         }
 

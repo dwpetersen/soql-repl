@@ -87,63 +87,6 @@ describe('equals()', () => {
         // Then
         expect(query.whereItems.length).toBe(0);
     });
-    
-    test('adds single quotes to operand if it\'s a string', () => {
-        const operand = 'John';
-        const query = new SOQLQuery()
-                            .where('Name')
-                            .equals(operand);
-        const expectedOperand = `'${operand}'`;
-        expect(query.whereItems.pop()).toBe(expectedOperand);
-    });
-
-    test('escapes single quotes if operand is a string', () => {
-        //Given
-        const operand = `O'Donnell's Whisky`;
-
-        //When
-        const query = new SOQLQuery()
-                            .where('Name')
-                            .equals(operand);
-        
-        //Then
-        const expectedOperand = `'O\\'Donnell\\'s Whisky'`;
-        expect(query.whereItems.pop()).toBe(expectedOperand);
-    });
-
-    test('escapes backslash if operand is a string', () => {
-        //Given
-        const operand = `C:\\Users`;
-
-        //When
-        const query = new SOQLQuery()
-                            .where('Name')
-                            .equals(operand);
-        
-        //Then
-        const expectedOperand = `'C:\\\\Users'`;
-        expect(query.whereItems.pop()).toBe(expectedOperand);
-    });
-    
-    test('converts operand to a string if it\'s a Date', () => {
-        const operand = new Date('2000-01-01');
-        const query = new SOQLQuery()
-                            .where('CreatedDate')
-                            .equals(operand);
-    
-        const expectedOperand = operand.toString();
-        expect(query.whereItems.pop()).toBe(expectedOperand);
-    });
-    
-    test('converts operand to a string if it\'s null', () => {
-        const operand = null;
-        const query = new SOQLQuery()
-                            .where('Color__c')
-                            .equals(operand);
-    
-        const expectedOperand = 'null';
-        expect(query.whereItems.pop()).toBe(expectedOperand);
-    });
 });
 
 describe('notEquals()', () => {
@@ -260,7 +203,7 @@ describe('greaterThan()', () => {
         expect(fieldExp.operand).toBe(operand);
     });
     
-    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+    test('when currentStatement != WHERE, whereItems is unchanged', () => {
         //Given
         const operand = 5;
         const query = new SOQLQuery().select('Name', 'CreatedDate')
@@ -292,7 +235,7 @@ describe('greaterOrEqual()', () => {
         expect(fieldExp.operand).toBe(operand);
     });
     
-    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+    test('when currentStatement != WHERE, whereItems is unchanged', () => {
         //Given
         const operand = 5;
         const query = new SOQLQuery().select('Name', 'CreatedDate')
@@ -319,11 +262,12 @@ describe('in()', () => {
                                      .in(...operandArray);
         
         //Then
-        const expectedWhereItems = [field, 'IN', '(\'Hello\',\'World\')'];
-        expect(query.whereItems).toEqual(expectedWhereItems);
+        const fieldExp = query.whereItems.pop() as FieldExpression;
+        expect(fieldExp.operator).toBe('IN');
+        expect(fieldExp.operand).toEqual(operandArray);
     });
 
-    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+    test('when currentStatement != WHERE, whereItems is unchanged', () => {
         //Given
         const operandArray = ['Hello', 'World'];
         
@@ -352,11 +296,12 @@ describe('notIn()', () => {
                                      .notIn(...operandArray);
         
         //Then
-        const expectedWhereItems = [field, 'NOT IN', '(\'Hello\',\'World\')'];
-        expect(query.whereItems).toEqual(expectedWhereItems);
+        const fieldExp = query.whereItems.pop() as FieldExpression;
+        expect(fieldExp.operator).toBe('NOT IN');
+        expect(fieldExp.operand).toEqual(operandArray);
     });
 
-    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+    test('when currentStatement != WHERE, whereItems is unchanged', () => {
         //Given
         const operandArray = ['Hello', 'World'];
         
@@ -385,11 +330,12 @@ describe('like()', () => {
         query.like(operand);
 
         //Then
-        const expectedWhereItems = [field, 'LIKE', `'${operand.toString()}'`];
-        expect(query.whereItems).toEqual(expectedWhereItems);
+        const fieldExp = query.whereItems.pop() as FieldExpression;
+        expect(fieldExp.operator).toBe('LIKE');
+        expect(fieldExp.operand).toBe(operand);
     });
     
-    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+    test('when currentStatement != WHERE, whereItems is unchanged', () => {
         //Given
         const operand = 'Hello%';
         const query = new SOQLQuery().select('Name', 'CreatedDate')
@@ -416,11 +362,12 @@ describe('includes()', () => {
                                      .includes(...operandArray);
         
         //Then
-        const expectedWhereItems = [field, 'INCLUDES', '(\'IT\',\'Government\')'];
-        expect(query.whereItems).toEqual(expectedWhereItems);
+        const fieldExp = query.whereItems.pop() as FieldExpression;
+        expect(fieldExp.operator).toBe('INCLUDES');
+        expect(fieldExp.operand).toEqual(operandArray);
     });
 
-    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+    test('when currentStatement != WHERE, whereItems is unchanged', () => {
         //Given
         const operandArray = ['IT', 'Government'];
         
@@ -449,11 +396,12 @@ describe('excludes()', () => {
                                      .excludes(...operandArray);
         
         //Then
-        const expectedWhereItems = [field, 'EXCLUDES', '(\'IT\',\'Government\')'];
-        expect(query.whereItems).toEqual(expectedWhereItems);
+        const fieldExp = query.whereItems.pop() as FieldExpression;
+        expect(fieldExp.operator).toBe('EXCLUDES');
+        expect(fieldExp.operand).toEqual(operandArray);
     });
 
-    test('when currentStatement != WHERE, whereItems are unchanged', () => {
+    test('when currentStatement != WHERE, whereItems is unchanged', () => {
         //Given
         const operandArray = ['IT', 'Government'];
         
@@ -595,4 +543,102 @@ test('execute() returns an error when path is not set', async () => {
     catch (err) {
         expect(err).toEqual(new Error(ERROR_PATH_MUST_BE_SET))
     }
+});
+
+describe('FieldExpression.expand()', () => {
+    test('creates array [field, operator, convertedOperand]', () => {
+        // Given
+        const field = 'Name';
+        const operator = '='
+        const operand = 'Umbrella Corp';
+        const fieldExp = new FieldExpression(field);
+        fieldExp.operator = operator;
+        fieldExp.operand = operand;
+
+        // When
+        const actualValue = fieldExp.expand();
+
+        const expectedValue = [field, operator, `'${operand}'`];
+        expect(actualValue).toEqual(expectedValue);
+    });
+
+    test('if operand string has single quotes, escape them', () => {
+        // Given
+        const field = 'Name';
+        const operator = '=';
+        const operand = `O'Donnell's Whisky`;
+        const fieldExp = new FieldExpression(field);
+        fieldExp.operator = operator;
+        fieldExp.operand = operand;
+
+        // When
+        const actualValue = fieldExp.expand();
+
+        const expectedValue = [field, operator, `'O\\'Donnell\\'s Whisky'`];
+        expect(actualValue).toEqual(expectedValue);
+    });
+
+    test('if operand string has backslashes, escape them', () => {
+        // Given
+        const field = 'Name';
+        const operator = '='
+        const operand = 'C:\\Games';
+        const fieldExp = new FieldExpression(field);
+        fieldExp.operator = operator;
+        fieldExp.operand = operand;
+
+        // When
+        const actualValue = fieldExp.expand();
+
+        const expectedValue = [field, operator, `'C:\\\\Games'`];
+        expect(actualValue).toEqual(expectedValue);
+    });
+
+    test('if operand is a Date, convert it to a string', () => {
+        // Given
+        const field = 'CreatedDate';
+        const operator = '='
+        const operand = new Date('2000-01-01');
+        const fieldExp = new FieldExpression(field);
+        fieldExp.operator = operator;
+        fieldExp.operand = operand;
+
+        // When
+        const actualValue = fieldExp.expand();
+
+        const expectedValue = [field, operator, operand.toString()];
+        expect(actualValue).toEqual(expectedValue);
+    });
+
+    test('if operand is a number, convert it to a string', () => {
+        // Given
+        const field = 'Number_of_dogs__c';
+        const operator = '='
+        const operand = 5;
+        const fieldExp = new FieldExpression(field);
+        fieldExp.operator = operator;
+        fieldExp.operand = operand;
+
+        // When
+        const actualValue = fieldExp.expand();
+
+        const expectedValue = [field, operator, operand.toString()];
+        expect(actualValue).toEqual(expectedValue);
+    });
+
+    test('if operand is a null, convert it to a string', () => {
+        // Given
+        const field = 'Color__c';
+        const operator = '='
+        const operand = null;
+        const fieldExp = new FieldExpression(field);
+        fieldExp.operator = operator;
+        fieldExp.operand = operand;
+
+        // When
+        const actualValue = fieldExp.expand();
+
+        const expectedValue = [field, operator, 'null'];
+        expect(actualValue).toEqual(expectedValue);
+    });
 });
