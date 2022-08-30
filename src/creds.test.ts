@@ -1,6 +1,6 @@
-import * as creds from '../creds';
+import * as creds from './creds';
 import * as fs from 'fs';
-import * as factory from './utils/factory'
+import * as factory from './__tests__/utils/factory'
 import * as path from 'path';
 
 test('openAlias() loads alias', () => {

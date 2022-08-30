@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import * as httpRequest from '../httprequest';
+import * as httpRequest from './httprequest';
 import axios from 'axios';
 import { AxiosResponse } from 'axios';
 import * as fs from 'fs';
-import * as factory from './utils/factory';
-import * as mocks from './utils/mocks';
+import * as factory from './__tests__/utils/factory';
+import * as mocks from './__tests__/utils/mocks';
 
 jest.mock('axios');
 
