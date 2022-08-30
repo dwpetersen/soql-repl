@@ -1,7 +1,7 @@
 import { Alias } from '../creds'
 import * as httpRequest from '../httprequest';
 import { FieldExpression } from './field-expression';
-import { ComparsionOperator as ComparisonOperator, Operand } from './types';
+import { ComparisonOperator, LogicalOperator, Operand } from './types';
 
 export interface SOQLQueryResult {
     totalSize: number;
@@ -23,7 +23,7 @@ export enum Statements {
     LIMIT
 }
 
-type WhereItem = string|FieldExpression;
+type WhereItem = FieldExpression|LogicalOperator;
 
 export const QUERY_PATH = '/services/data/v55.0/query/?q=';
 export const ERROR_PATH_MUST_BE_SET = 'Path must be set on SOQLQuery';
@@ -65,32 +65,6 @@ export class SOQLQuery {
             }
         });
         return expandedItems;
-    }
-
-    private operandToString(operand: Operand) {
-        let stringValue = '';
-        if (typeof operand === 'string') {
-            stringValue = operand.replaceAll('\\', '\\\\')
-                                 .replaceAll('\'', '\\\'');
-            stringValue = `'${stringValue}'`;
-        }
-        else if (operand instanceof Date ||
-                 typeof operand === 'number') {
-            stringValue = operand.toString();
-        }
-        // disabled this lint because value is passed in from javascript
-        // not typescript
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        else if (operand === null) {
-            stringValue = 'null';
-        }
-
-        return stringValue;
-    }
-
-    private addExpression(operator: ComparisonOperator, operand: Operand, itemList: unknown[]) {
-        const stringValue = this.operandToString(operand);
-        itemList.push(operator, stringValue);
     }
 
     private handleOperator(operator: ComparisonOperator, operand: Operand|Operand[]) {
