@@ -419,7 +419,7 @@ describe('excludes()', () => {
 });
 
 describe('and()', () => {
-    test('if currentStatement == WHERE, adds "AND" and field to whereItems', () => {
+    test('if currentStatement == WHERE, adds "AND" and new FieldExpression to whereItems', () => {
         //Given
         const field = 'Industry';
         const query = new SOQLQuery().select('Id', 'Name')
@@ -431,7 +431,8 @@ describe('and()', () => {
         query.and(field);
 
         //Then
-        expect(query.whereItems.pop()).toBe(field);
+        const expectedItem = new FieldExpression(field)
+        expect(query.whereItems.pop()).toEqual(expectedItem);
         expect(query.whereItems.pop()).toBe('AND');
     });
 
@@ -463,7 +464,8 @@ describe('or()', () => {
         query.or(field);
 
         //Then
-        expect(query.whereItems.pop()).toBe(field);
+        const expectedItem = new FieldExpression(field)
+        expect(query.whereItems.pop()).toEqual(expectedItem);
         expect(query.whereItems.pop()).toBe('OR');
     });
 

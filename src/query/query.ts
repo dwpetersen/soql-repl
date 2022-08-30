@@ -158,14 +158,14 @@ export class SOQLQuery {
 
     and(field: string) {
         if (this.currentStatement === Statements.WHERE) {
-            this.whereItems.push('AND', field);
+            this.whereItems.push('AND', new FieldExpression(field));
         }
         return this;
     }
 
     or(field: string) {
         if (this.currentStatement === Statements.WHERE) {
-            this.whereItems.push('OR', field);
+            this.whereItems.push('OR', new FieldExpression(field));
         }
         return this;
     }
