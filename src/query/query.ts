@@ -1,5 +1,7 @@
-import { Alias } from './creds'
-import * as httpRequest from './httprequest';
+import { Alias } from '../creds'
+import * as httpRequest from '../httprequest';
+import { FieldExpression } from './field-expression';
+import { CompOperator, Operand } from './types';
 
 export interface SOQLQueryResult {
     totalSize: number;
@@ -21,17 +23,7 @@ export enum Statements {
     LIMIT
 }
 
-type CompOperator = '='|'!='|'<'|'<='|
-                '>'|'>='|'LIKE'|'IN'|
-                'NOT IN'|'INCLUDES'|'EXCLUDES';
-
-type LogicalOperator = 'AND'|'OR'|'NOT';
-
-type Operator = CompOperator|LogicalOperator
-
-type Operand = string|number|Date|null;
-
-type WhereItem = string|FieldExpression
+type WhereItem = string|FieldExpression;
 
 export const QUERY_PATH = '/services/data/v55.0/query/?q=';
 export const ERROR_PATH_MUST_BE_SET = 'Path must be set on SOQLQuery';
@@ -106,14 +98,6 @@ export class SOQLQuery {
             const expression = this.whereItems[this.whereItems.length - 1] as FieldExpression;
             expression.operator = operator;
             expression.operand = operand;
-        }
-    }
-
-    private handleArrayOperation(operator: CompOperator, operandArray: Operand[]) {
-        if (this.currentStatement === Statements.WHERE) {
-            const innerValue = operandArray.map(e => this.operandToString(e))
-                                           .join(',');
-            this.whereItems.push(operator, `(${innerValue})`);
         }
     }
 
@@ -212,53 +196,5 @@ export class SOQLQuery {
         else {
             throw new Error(ERROR_PATH_MUST_BE_SET);
         }
-    }
-}
-
-export class FieldExpression {
-    field: string;
-    operator?: Operator;
-    operand?: Operand|Operand[];
-
-    constructor(field: string) {
-        this.field = field;
-    }
-
-    private operandToString(operand?: Operand) {
-        const operandToConvert = operand ? operand : this.operand;
-        let stringValue = '';
-        if (typeof operandToConvert === 'string') {
-            stringValue = operandToConvert.replaceAll('\\', '\\\\')
-                                 .replaceAll('\'', '\\\'');
-            stringValue = `'${stringValue}'`;
-        }
-        else if (operandToConvert instanceof Date ||
-                 typeof operandToConvert === 'number') {
-            stringValue = operandToConvert.toString();
-        }
-        else if (Array.isArray(operandToConvert)) {
-            const innerValue = operandToConvert.map(e => this.operandToString(e))
-                                           .join(',');
-            stringValue = `(${innerValue})`;
-        }
-        // disabled this lint because value is passed in from javascript
-        // not typescript
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        else if (operandToConvert === null) {
-            stringValue = 'null';
-        }
-
-        return stringValue;
-    }
-
-    expand(): string[] {
-        const expandedExpression: string[] = [this.field];
-        if(this.operator) {
-            expandedExpression.push(this.operator);
-        }
-        if(this.operand !== undefined) {
-            expandedExpression.push(this.operandToString());
-        }
-        return expandedExpression;
     }
 }

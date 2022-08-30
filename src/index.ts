@@ -1,5 +1,5 @@
 import * as creds from './creds';
-import { SOQLQuery, SOQLQueryResult } from './query'
+import { SOQLQuery, SOQLQueryResult } from './query/query'
 import { settings } from './settings';
 
 const currentAlias = creds.openAlias(settings.defaultAlias);
