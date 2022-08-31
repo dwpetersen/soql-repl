@@ -2,6 +2,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 import axios from 'axios';
 import { Alias } from './creds';
 import * as creds from './creds';
+import * as open from 'open';
 
 const TOKEN_TIMEOUT_MINS = 60;
 
@@ -18,7 +19,23 @@ function getDefaultHeaders(alias: Alias) {
     }
 }
 
-function buildFormData(alias: Alias) {
+function buildAuthFormData(alias: Alias) {
+    const data = {
+        response_type: 'token',
+        client_id: alias.clientId,
+        client_secret: alias.clientSecret,
+        login_hint: alias.username,
+        redirect_uri: 'http://localhost:3000/oauth2/callback',
+    }
+
+    const formData = Object.entries(data).map(entry => {
+        return encodeURI(entry[0]) + '=' + encodeURI(entry[1]);
+    }).join('&');
+
+    return formData;
+}
+
+function buildTokenFormData(alias: Alias) {
     const data = {
         grant_type: 'password',
         client_id: alias.clientId,
@@ -73,9 +90,15 @@ export async function get<T = never>(alias: Alias, path: string, headers?: objec
     return response;
 }
 
+export async function authorizeApplication(alias: Alias) {
+    let url = 'https://login.salesforce.com/services/oauth2/authorize?';
+    url += buildAuthFormData(alias);
+    await open(url);
+}
+
 async function getAccessToken(alias: Alias) {
     const url = 'https://login.salesforce.com/services/oauth2/token';
-    const data = buildFormData(alias);
+    const data = buildTokenFormData(alias);
 
     const response: AxiosResponse<TokenResponseData> = await axios.post(url, data);
     return response.data.access_token;
