@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Alias } from './creds';
 import * as creds from './creds';
 import * as open from 'open';
+import * as express from 'express';
+import { Express, Request, Response } from 'express';
 
 const TOKEN_TIMEOUT_MINS = 60;
 
@@ -21,7 +23,7 @@ function getDefaultHeaders(alias: Alias) {
 
 function buildAuthFormData(alias: Alias) {
     const data = {
-        response_type: 'token',
+        response_type: 'code',
         client_id: alias.clientId,
         client_secret: alias.clientSecret,
         login_hint: alias.username,
@@ -45,6 +47,22 @@ function buildTokenFormData(alias: Alias) {
     }
 
     Object.entries
+
+    const formData = Object.entries(data).map(entry => {
+        return encodeURI(entry[0]) + '=' + encodeURI(entry[1]);
+    }).join('&');
+
+    return formData;
+}
+
+function buildTokenFromCodeFormData(alias: Alias, code: string) {
+    const data = {
+        grant_type: 'authorization_code',
+        client_id: alias.clientId,
+        client_secret: alias.clientSecret,
+        code: code,
+        redirect_uri: 'http://localhost:3000/oauth2/callback'
+    }
 
     const formData = Object.entries(data).map(entry => {
         return encodeURI(entry[0]) + '=' + encodeURI(entry[1]);
@@ -90,15 +108,54 @@ export async function get<T = never>(alias: Alias, path: string, headers?: objec
     return response;
 }
 
-export async function authorizeApplication(alias: Alias) {
-    let url = 'https://login.salesforce.com/services/oauth2/authorize?';
+export function authorizeApplication(alias: Alias) {
+    let url =  alias.url + '/services/oauth2/authorize?';
     url += buildAuthFormData(alias);
-    await open(url);
+    
+    const app: Express = express();
+    const port = 3000;
+
+    return new Promise((resolve, reject) => {
+        app.get('/oauth2/callback', (req: Request, res: Response) => {
+            const code = req.query.code as string;
+            console.log('code: ' + code);
+    
+            getAccessTokenFromCode(alias, code)
+                .then(token => {
+                    console.log('accessToken: ' + token);
+                    res.send('Access token has been set. You can now close this page');
+                    resolve(token);
+                })
+                .catch(err => {
+                    const errorReceived = err as AxiosError;
+                    res.status(500);
+                    res.send({
+                        error: errorReceived.message,
+                        response: errorReceived.response?.data
+                    })
+                    reject(err);
+                })
+                .finally(() =>{
+                    server.close();
+                });
+        });
+    
+        const server = app.listen(port);
+        open(url).catch(reject);
+    });
 }
 
 async function getAccessToken(alias: Alias) {
     const url = 'https://login.salesforce.com/services/oauth2/token';
     const data = buildTokenFormData(alias);
+
+    const response: AxiosResponse<TokenResponseData> = await axios.post(url, data);
+    return response.data.access_token;
+}
+
+async function getAccessTokenFromCode(alias: Alias, code: string) {
+    const url = 'https://login.salesforce.com/services/oauth2/token';
+    const data = buildTokenFromCodeFormData(alias, code);
 
     const response: AxiosResponse<TokenResponseData> = await axios.post(url, data);
     return response.data.access_token;
