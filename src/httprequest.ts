@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse } from 'axios';
 import axios from 'axios';
-import { Alias } from './creds';
+import { Alias, OAuthAlias, PasswordAlias } from './creds';
 import * as creds from './creds';
 import * as open from 'open';
 import * as express from 'express';
@@ -21,7 +21,7 @@ function getDefaultHeaders(alias: Alias) {
     }
 }
 
-function buildAuthFormData(alias: Alias) {
+function buildAuthFormData(alias: OAuthAlias) {
     const data = {
         response_type: 'code',
         client_id: alias.clientId,
@@ -37,7 +37,7 @@ function buildAuthFormData(alias: Alias) {
     return formData;
 }
 
-function buildTokenFormData(alias: Alias) {
+function buildTokenFromPasswordFormData(alias: PasswordAlias) {
     const data = {
         grant_type: 'password',
         client_id: alias.clientId,
@@ -46,8 +46,6 @@ function buildTokenFormData(alias: Alias) {
         password: alias.password + alias.securityToken
     }
 
-    Object.entries
-
     const formData = Object.entries(data).map(entry => {
         return encodeURI(entry[0]) + '=' + encodeURI(entry[1]);
     }).join('&');
@@ -55,13 +53,13 @@ function buildTokenFormData(alias: Alias) {
     return formData;
 }
 
-function buildTokenFromCodeFormData(alias: Alias, code: string) {
+function buildTokenFromCodeFormData(alias: OAuthAlias, code: string) {
     const data = {
         grant_type: 'authorization_code',
         client_id: alias.clientId,
         client_secret: alias.clientSecret,
         code: code,
-        redirect_uri: 'http://localhost:3000/oauth2/callback'
+        redirect_uri: alias.redirectURI
     }
 
     const formData = Object.entries(data).map(entry => {
@@ -108,19 +106,19 @@ export async function get<T = never>(alias: Alias, path: string, headers?: objec
     return response;
 }
 
-export function authorizeApplication(alias: Alias) {
+export function getAccessTokenWithOAuth(alias: OAuthAlias) {
     let url =  alias.url + '/services/oauth2/authorize?';
     url += buildAuthFormData(alias);
     
     const app: Express = express();
     const port = 3000;
 
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         app.get('/oauth2/callback', (req: Request, res: Response) => {
             const code = req.query.code as string;
             console.log('code: ' + code);
     
-            getAccessTokenFromCode(alias, code)
+            getAccessTokenWithCode(alias, code)
                 .then(token => {
                     console.log('accessToken: ' + token);
                     res.send('Access token has been set. You can now close this page');
@@ -145,20 +143,34 @@ export function authorizeApplication(alias: Alias) {
     });
 }
 
-async function getAccessToken(alias: Alias) {
+async function getAccessTokenWithPassword(alias: PasswordAlias) {
     const url = 'https://login.salesforce.com/services/oauth2/token';
-    const data = buildTokenFormData(alias);
+    const data = buildTokenFromPasswordFormData(alias);
 
     const response: AxiosResponse<TokenResponseData> = await axios.post(url, data);
     return response.data.access_token;
 }
 
-async function getAccessTokenFromCode(alias: Alias, code: string) {
+async function getAccessTokenWithCode(alias: OAuthAlias, code: string) {
     const url = 'https://login.salesforce.com/services/oauth2/token';
     const data = buildTokenFromCodeFormData(alias, code);
 
     const response: AxiosResponse<TokenResponseData> = await axios.post(url, data);
     return response.data.access_token;
+}
+
+async function getAccessToken(alias: Alias) {
+    if (creds.isOAuthAlias(alias)) {
+        const oauthAlias = alias as OAuthAlias;
+        return await getAccessTokenWithOAuth(oauthAlias);
+    }
+    else if (creds.isPasswordAlias(alias)) {
+        const passwordAlias = alias as PasswordAlias;
+        return await getAccessTokenWithPassword(passwordAlias);
+    }
+    else {
+        throw new TypeError('Alias type not supported.');
+    }
 }
 
 function isTokenExpired(alias: Alias) {

@@ -1,18 +1,62 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as utils from './utils'
 
 export const CREDS_PATH = 'creds';
 
-export interface Alias {
+interface BaseAlias {
     name: string;
     url: string;
     clientId: string;
     clientSecret: string;
     username: string;
-    password: string;
-    securityToken: string;
     currentToken: string;
     lastRequest?: Date;
+}
+
+function isBaseAlias(value: unknown) {
+    const alias = value as BaseAlias;
+    const properties = ['name', 'url',
+                        'clientId', 'clientSecret',
+                        'username', 'currentToken'];
+    return utils.type.hasProperties(alias, properties);
+}
+
+export interface PasswordAlias extends BaseAlias {
+    password: string;
+    securityToken: string;
+}
+
+export function isPasswordAlias(value: unknown) {
+    const alias = value as PasswordAlias;
+    if(!isBaseAlias(alias)) {
+        return false;
+    }
+    else {
+        const properties = ['password', 'securityToken'];
+        return utils.type.hasProperties(alias, properties)
+    }
+}
+
+export interface OAuthAlias extends BaseAlias {
+    redirectURI: string;
+}
+
+export function isOAuthAlias(value: unknown) {
+    const alias = value as OAuthAlias;
+    if(!isBaseAlias(alias)) {
+        return false;
+    }
+    else {
+        const properties = ['redirectURI'];
+        return utils.type.hasProperties(alias, properties)
+    }
+}
+
+export type Alias = OAuthAlias|PasswordAlias;
+
+export function isAlias(value: unknown) {
+    return isOAuthAlias(value) || isPasswordAlias(value);
 }
 
 function getAliasPath(name: string) {
