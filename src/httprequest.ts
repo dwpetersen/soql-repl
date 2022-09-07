@@ -2,6 +2,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 import axios from 'axios';
 import { Alias, OAuthAlias, PasswordAlias } from './creds';
 import * as creds from './creds';
+import * as token from './auth/token';
 import * as open from 'open';
 import * as express from 'express';
 import { Express, Request, Response } from 'express';
@@ -99,7 +100,7 @@ export async function get<T = never>(alias: Alias, path: string, headers?: objec
         return axios.get<T>(...args);
     };
 
-    await checkCurrentToken(alias);
+    await token.checkCurrentToken(alias);
     const response = await retry(wrappedAxiosGet, params);
     alias.lastRequest = new Date();
     creds.saveAlias(alias);
