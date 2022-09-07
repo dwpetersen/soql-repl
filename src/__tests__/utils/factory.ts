@@ -1,4 +1,4 @@
-import { Alias } from "../../creds";
+import { OAuthAlias, PasswordAlias } from "../../creds";
 
 export function createQueryResponse() {
     return { 
@@ -31,7 +31,7 @@ export function createTokenResponse() {
     }
 }
 
-export function createAlias(lastRequest?: Date): Alias {
+export function createPasswordAlias(lastRequest?: Date): PasswordAlias {
     return {
         name: 'test',
         url: 'https://test-domain.my.salesforce.com',
@@ -44,3 +44,17 @@ export function createAlias(lastRequest?: Date): Alias {
         lastRequest
     };
 }
+
+export function createOAuthAlias(lastRequest?: Date): OAuthAlias {
+    return {
+        name: 'test',
+        url: 'https://test-domain.my.salesforce.com',
+        clientId: 'clientId123',
+        clientSecret: 'clientSecret123',
+        username: 'test@example.com',
+        currentToken: 'currentToken123',
+        lastRequest,
+        redirectURI: 'https://localhost/oauth2/callback'
+    };
+}
+

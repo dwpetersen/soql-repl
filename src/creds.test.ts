@@ -1,11 +1,26 @@
 import * as creds from './creds';
+import { OAuthAlias, PasswordAlias } from './creds';
 import * as fs from 'fs';
 import * as factory from './__tests__/utils/factory'
 import * as path from 'path';
 
-test('openAlias() loads alias', () => {
+test('openAlias() loads PasswordAlias', () => {
     //Given
-    const alias = factory.createAlias();
+    const alias: PasswordAlias = factory.createPasswordAlias();
+    const aliasJSON = JSON.stringify(alias);
+    const mockReadFileSync = jest.spyOn(fs, 'readFileSync');
+    mockReadFileSync.mockReturnValue(Buffer.from(aliasJSON));
+
+    //When
+    const actualAlias = creds.openAlias(alias.name);
+
+    //Then
+    expect(actualAlias).toEqual(alias);
+});
+
+test('openAlias() loads OAuthAlias', () => {
+    //Given
+    const alias: OAuthAlias = factory.createOAuthAlias();
     const aliasJSON = JSON.stringify(alias);
     const mockReadFileSync = jest.spyOn(fs, 'readFileSync');
     mockReadFileSync.mockReturnValue(Buffer.from(aliasJSON));
@@ -19,7 +34,7 @@ test('openAlias() loads alias', () => {
 
 test('when lastRequest is set, openAlias() converts ISO string to Date object', () => {
     //Given
-    const alias = factory.createAlias(new Date());
+    const alias = factory.createPasswordAlias(new Date());
     const aliasJSON = JSON.stringify(alias);
     const mockReadFileSync = jest.spyOn(fs, 'readFileSync');
     mockReadFileSync.mockReturnValue(Buffer.from(aliasJSON));
@@ -34,7 +49,7 @@ test('when lastRequest is set, openAlias() converts ISO string to Date object', 
 
 test('saveAlias() saves alias', () => {
     //Given
-    const alias = factory.createAlias();
+    const alias = factory.createPasswordAlias();
     const mockWriteFileSync = jest.spyOn(fs, 'writeFileSync');
 
     //When
