@@ -116,11 +116,9 @@ export function getAccessTokenWithOAuth(alias: OAuthAlias) {
     return new Promise<string>((resolve, reject) => {
         app.get('/oauth2/callback', (req: Request, res: Response) => {
             const code = req.query.code as string;
-            console.log('code: ' + code);
     
             getAccessTokenWithCode(alias, code)
                 .then(token => {
-                    console.log('accessToken: ' + token);
                     res.send('Access token has been set. You can now close this page');
                     resolve(token);
                 })
