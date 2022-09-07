@@ -27,7 +27,7 @@ function buildAuthFormData(alias: OAuthAlias) {
         client_id: alias.clientId,
         client_secret: alias.clientSecret,
         login_hint: alias.username,
-        redirect_uri: 'http://localhost:3000/oauth2/callback',
+        redirect_uri: alias.redirectURI
     }
 
     const formData = Object.entries(data).map(entry => {
