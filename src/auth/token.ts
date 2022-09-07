@@ -1,6 +1,7 @@
 import * as creds from '../creds';
-import { Alias, OAuthAlias } from '../creds';
+import { Alias, OAuthAlias, PasswordAlias } from '../creds';
 import * as oauth from './oauth';
+import * as password from './password';
 
 const TOKEN_TIMEOUT_MINS = 60;
 
@@ -9,10 +10,10 @@ async function getAccessToken(alias: Alias) {
         const oauthAlias = alias as OAuthAlias;
         return await oauth.getAccessToken(oauthAlias);
     }
-    /*else if (creds.isPasswordAlias(alias)) {
+    else if (creds.isPasswordAlias(alias)) {
         const passwordAlias = alias as PasswordAlias;
-        return await getAccessTokenWithPassword(passwordAlias);
-    }*/
+        return await password.getAccessToken(passwordAlias);
+    }
     else {
         throw new TypeError('Alias type not supported.');
     }
