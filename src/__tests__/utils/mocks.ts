@@ -2,6 +2,7 @@ import { readFileSync } from "fs";
 import { AxiosError, AxiosResponse } from "axios";
 import * as path from 'path';
 import { Alias } from "../../creds";
+import { TokenResponseData } from "../../auth/types";
 
 const DATA_PATH = path.resolve('src', '__tests__', 'data');
 
@@ -29,7 +30,7 @@ function createAxiosError(alias: Alias, method: string, name: string, url: strin
     return errorResponse;
 }
 
-function createFormPostResponse(name: string, baseURL: string, url: string): AxiosResponse {
+function createFormPostResponse<T>(name: string, baseURL: string, url: string): AxiosResponse<T> {
     const method = 'post';
     const responseType = 'response';
 
@@ -42,7 +43,7 @@ function createFormPostResponse(name: string, baseURL: string, url: string): Axi
         axiosTemplates.set(key, responseTemplate);
     }
 
-    const response: AxiosResponse = {...responseTemplate} as AxiosResponse;
+    const response = {...responseTemplate} as AxiosResponse<T>;
     response.config.baseURL = baseURL;
     response.config.url = url;
     return response;
@@ -62,7 +63,7 @@ const postResponse = {
         const url = alias.url + '/services/oauth2/authorize?'
         return createFormPostResponse('oauthCode', alias.url, url);
     },
-    token: (): AxiosResponse => {
+    token: (): AxiosResponse<TokenResponseData> => {
         return createFormPostResponse('token', 'https://login.salesforce.com', '/services/oauth2/token');
     }
 }
