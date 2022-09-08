@@ -10,7 +10,7 @@ interface BaseAlias {
     clientId: string;
     clientSecret: string;
     username: string;
-    currentToken: string;
+    currentToken?: string;
     lastRequest?: Date;
 }
 
@@ -18,7 +18,7 @@ function isBaseAlias(value: unknown) {
     const alias = value as BaseAlias;
     const properties = ['name', 'url',
                         'clientId', 'clientSecret',
-                        'username', 'currentToken'];
+                        'username'];
     return utils.type.hasProperties(alias, properties);
 }
 

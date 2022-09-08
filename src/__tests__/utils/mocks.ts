@@ -22,7 +22,7 @@ function createAxiosError(alias: Alias, method: string, name: string, url: strin
     errorResponse.config.baseURL = alias.url;
 
     if (errorResponse.config.headers) {
-        errorResponse.config.headers.Authorization = `Bearer ${alias.currentToken}`;
+        errorResponse.config.headers.Authorization = `Bearer ${alias.currentToken ?? 'defaultToken'}`;
     }
 
     errorResponse.config.url = url;
@@ -61,6 +61,9 @@ const postResponse = {
     oauthCode: (alias: Alias): AxiosResponse => {
         const url = alias.url + '/services/oauth2/authorize?'
         return createFormPostResponse('oauthCode', alias.url, url);
+    },
+    token: (): AxiosResponse => {
+        return createFormPostResponse('token', 'https://login.salesforce.com', '/services/oauth2/token');
     }
 }
 

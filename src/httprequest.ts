@@ -7,9 +7,14 @@ import * as token from './auth/token';
 type AxiosGetParams = Parameters<typeof axios.get>;
 
 function getDefaultHeaders(alias: Alias) {
-    return {
-        'Authorization': `Bearer ${alias.currentToken}`,
-        'Accept': 'application/json'
+    if (alias.currentToken) {
+        return {
+            'Authorization': `Bearer ${alias.currentToken}`,
+            'Accept': 'application/json'
+        }
+    }
+    else {
+        throw new ReferenceError('currentToken on Alias is not set');
     }
 }
 
