@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import * as token from './token';
+import * as oauth from './oauth';
 import { TokenResponseData } from './types';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as factory from '../__tests__/utils/factory';
 import * as mocks from '../__tests__/utils/mocks';
-
-jest.mock('axios');
 
 let mockPost = jest.spyOn(axios, 'post');
 let mockWriteFileSync = jest.spyOn(fs, 'writeFileSync');
@@ -46,6 +45,26 @@ describe('checkCurrentToken()', () => {
         expect(mockWriteFileSync.mock.calls.length).toBe(1);
         const tokenData = tokenResponse.data as TokenResponseData;
         expect(alias.currentToken).toBe(tokenData.access_token);
+        expect(alias.lastRequest.getTime()).toBeGreaterThan(oldLastRequest.getTime());
+    });
+
+    test('if the token for OAuthAlias has expired, set new token and lastRequest date', async () => {
+        // Given
+        const alias = factory.createOAuthAlias();
+        const oldLastRequest = new Date();
+        oldLastRequest.setHours(oldLastRequest.getHours() - 2);
+        alias.lastRequest = oldLastRequest;
+
+        const mockGetAccessToken = jest.spyOn(oauth, 'getAccessToken');
+        const expectedToken = 'token123';
+        mockGetAccessToken.mockResolvedValue(expectedToken);
+
+        // When
+        await token.checkCurrentToken(alias);
+
+        // Then
+        expect(mockWriteFileSync.mock.calls.length).toBe(1);
+        expect(alias.currentToken).toBe(expectedToken);
         expect(alias.lastRequest.getTime()).toBeGreaterThan(oldLastRequest.getTime());
     });
 });
