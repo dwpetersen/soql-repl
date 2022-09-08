@@ -17,16 +17,36 @@ describe('checkCurrentToken()', () => {
         const alias = factory.createPasswordAlias();
         alias.currentToken = undefined;
         const tokenResponse = mocks.axios.post.response.token();
-        mockPost.mockResolvedValue(tokenResponse)
+        mockPost.mockResolvedValue(tokenResponse);
 
         // When
         await token.checkCurrentToken(alias);
 
         // Then
-        //Then
         expect(mockWriteFileSync.mock.calls.length).toBe(1);
         const tokenData = tokenResponse.data as TokenResponseData;
         expect(alias.currentToken).toBe(tokenData.access_token);
+        expect(alias.lastRequest).toBeDefined();
+    });
+
+    test('if the token has expired, set new token and lastRequest date', async () => {
+        // Given
+        const alias = factory.createPasswordAlias();
+        const oldLastRequest = new Date();
+        oldLastRequest.setHours(oldLastRequest.getHours() - 2);
+        alias.lastRequest = oldLastRequest;
+
+        const tokenResponse = mocks.axios.post.response.token();
+        mockPost.mockResolvedValue(tokenResponse);
+
+        // When
+        await token.checkCurrentToken(alias);
+
+        // Then
+        expect(mockWriteFileSync.mock.calls.length).toBe(1);
+        const tokenData = tokenResponse.data as TokenResponseData;
+        expect(alias.currentToken).toBe(tokenData.access_token);
+        expect(alias.lastRequest.getTime()).toBeGreaterThan(oldLastRequest.getTime());
     });
 });
 
