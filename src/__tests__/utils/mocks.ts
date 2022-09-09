@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { AxiosError, AxiosResponse } from "axios";
 import * as path from 'path';
-import { Alias } from "../../creds";
+import { Alias } from "../../auth/creds";
 import { TokenResponse } from "../../auth/types";
 
 const DATA_PATH = path.resolve('src', '__tests__', 'data');

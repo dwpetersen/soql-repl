@@ -1,4 +1,4 @@
-import { Alias } from '../creds'
+import { Alias } from '../auth/creds'
 import * as httpRequest from '../httprequest';
 import { FieldExpression } from './field-expression';
 import { ComparisonOperator, LogicalOperator, Operand } from './types';

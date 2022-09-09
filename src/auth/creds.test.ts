@@ -1,7 +1,7 @@
 import * as creds from './creds';
 import { OAuthAlias, PasswordAlias } from './creds';
 import * as fs from 'fs';
-import * as factory from './__tests__/utils/factory'
+import * as factory from '../__tests__/utils/factory'
 import * as path from 'path';
 
 describe('openAlias()', () => {

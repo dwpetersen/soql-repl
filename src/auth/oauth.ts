@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import axios from 'axios';
-import { OAuthAlias } from "../creds";
+import { OAuthAlias } from "./creds";
 import { TokenResponse } from './types';
 import * as open from 'open';
 import * as express from 'express';

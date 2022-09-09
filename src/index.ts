@@ -1,4 +1,4 @@
-import * as creds from './creds';
+import * as creds from './auth/creds';
 import { SOQLQuery, SOQLQueryResult } from './query/query'
 import { settings } from './settings';
 

@@ -1,5 +1,5 @@
-import * as creds from '../creds';
-import { Alias, OAuthAlias, PasswordAlias } from '../creds';
+import * as creds from './creds';
+import { Alias, OAuthAlias, PasswordAlias } from './creds';
 import * as oauth from './oauth';
 import * as password from './password';
 

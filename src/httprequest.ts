@@ -1,7 +1,7 @@
 import { AxiosError, AxiosResponse } from 'axios';
 import axios from 'axios';
-import { Alias } from './creds';
-import * as creds from './creds';
+import { Alias } from './auth/creds';
+import * as creds from './auth/creds';
 import * as token from './auth/token';
 
 type AxiosGetParams = Parameters<typeof axios.get>;

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PasswordAlias } from '../creds';
+import { PasswordAlias } from './creds';
 import { TokenResponse } from './types';
 
 function buildFormData(alias: PasswordAlias) {

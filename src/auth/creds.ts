@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as utils from './utils'
+import * as utils from '../utils'
 
 export const CREDS_PATH = 'creds';
 

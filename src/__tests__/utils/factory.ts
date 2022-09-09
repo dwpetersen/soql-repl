@@ -1,4 +1,4 @@
-import { OAuthAlias, PasswordAlias } from "../../creds";
+import { OAuthAlias, PasswordAlias } from "../../auth/creds";
 
 export function createQueryResponse() {
     return { 
