@@ -15,7 +15,7 @@ export class FieldExpression {
         if(isDateLiteral(operandToConvert)) {
             stringValue = operandToConvert;
         }
-        if (typeof operandToConvert === 'string') {
+        else if (typeof operandToConvert === 'string') {
             stringValue = operandToConvert.replaceAll('\\', '\\\\')
                                  .replaceAll('\'', '\\\'');
             stringValue = `'${stringValue}'`;
