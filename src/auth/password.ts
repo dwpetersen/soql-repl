@@ -1,7 +1,6 @@
-import { AxiosResponse } from 'axios';
 import axios from 'axios';
 import { PasswordAlias } from '../creds';
-import { TokenResponseData } from './types';
+import { TokenResponse } from './types';
 
 function buildFormData(alias: PasswordAlias) {
     const data = {
@@ -23,6 +22,6 @@ export async function getAccessToken(alias: PasswordAlias) {
     const url = 'https://login.salesforce.com/services/oauth2/token';
     const data = buildFormData(alias);
 
-    const response: AxiosResponse<TokenResponseData> = await axios.post(url, data);
+    const response: TokenResponse = await axios.post(url, data);
     return response.data.access_token;
 }

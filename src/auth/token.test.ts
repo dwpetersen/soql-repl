@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import * as token from './token';
 import * as oauth from './oauth';
-import { TokenResponseData } from './types';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as factory from '../__tests__/utils/factory';
@@ -23,8 +22,7 @@ describe('checkCurrentToken()', () => {
 
         // Then
         expect(mockWriteFileSync.mock.calls.length).toBe(1);
-        const tokenData = tokenResponse.data as TokenResponseData;
-        expect(alias.currentToken).toBe(tokenData.access_token);
+        expect(alias.currentToken).toBe(tokenResponse.data.access_token);
         expect(alias.lastRequest).toBeDefined();
     });
 
@@ -43,8 +41,7 @@ describe('checkCurrentToken()', () => {
 
         // Then
         expect(mockWriteFileSync.mock.calls.length).toBe(1);
-        const tokenData = tokenResponse.data as TokenResponseData;
-        expect(alias.currentToken).toBe(tokenData.access_token);
+        expect(alias.currentToken).toBe(tokenResponse.data.access_token);
         expect(alias.lastRequest.getTime()).toBeGreaterThan(oldLastRequest.getTime());
     });
 

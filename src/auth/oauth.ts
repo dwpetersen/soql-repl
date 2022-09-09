@@ -1,7 +1,7 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 import axios from 'axios';
 import { OAuthAlias } from "../creds";
-import { TokenResponseData } from './types';
+import { TokenResponse } from './types';
 import * as open from 'open';
 import * as express from 'express';
 import { Express, Request, Response } from 'express';
@@ -42,7 +42,7 @@ async function getAccessTokenWithCode(alias: OAuthAlias, code: string) {
     const url = 'https://login.salesforce.com/services/oauth2/token';
     const data = buildTokenFromCodeFormData(alias, code);
 
-    const response: AxiosResponse<TokenResponseData> = await axios.post(url, data);
+    const response: TokenResponse = await axios.post(url, data);
     return response.data.access_token;
 }
 
