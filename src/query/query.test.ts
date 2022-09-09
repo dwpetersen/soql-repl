@@ -1,5 +1,5 @@
 import * as httpRequest from '../httprequest';
-import { Alias } from '../creds';
+import { Alias } from '../auth/creds';
 import { ERROR_PATH_MUST_BE_SET, QUERY_PATH, SOQLQuery, Statements } from './query';
 import { FieldExpression } from './field-expression';
 import { AxiosResponse } from 'axios';

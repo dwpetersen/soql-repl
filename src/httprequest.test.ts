@@ -14,7 +14,7 @@ const mockPost = axios.post as jest.Mock;
 describe('get()', () => {
     test('returns response', async () => {
         //Given
-        const alias = factory.createAlias(new Date());
+        const alias = factory.createPasswordAlias(new Date());
         const path = factory.createQueryPath();
     
         const response = factory.createQueryResponse();
@@ -29,7 +29,7 @@ describe('get()', () => {
     
     test('when alias has no lastRequest, sets token then returns response', async () => {
         //Given
-        const alias = factory.createAlias();
+        const alias = factory.createPasswordAlias();
         const path = factory.createQueryPath();
     
         const tokenResponse = factory.createTokenResponse();
@@ -53,7 +53,7 @@ describe('get()', () => {
         //Given
         const lastRequest = new Date();
         lastRequest.setHours(lastRequest.getHours() - 2);
-        const alias = factory.createAlias(lastRequest);
+        const alias = factory.createPasswordAlias(lastRequest);
     
         const path = factory.createQueryPath();
     
@@ -76,7 +76,7 @@ describe('get()', () => {
 
     test('when ENOTFOUND error occurs, three attempts are made before throwing error', async () => {
         //Given
-        const alias = factory.createAlias(new Date());
+        const alias = factory.createPasswordAlias(new Date());
         const path = factory.createQueryPath();
     
         const response = mocks.axios.get.error.notFound(alias, path);
@@ -98,7 +98,7 @@ describe('get()', () => {
 
     test('when error response is received, an error is thrown', async () => {
         //Given
-        const alias = factory.createAlias(new Date());
+        const alias = factory.createPasswordAlias(new Date());
         const path = factory.createQueryPath();
     
         const response = mocks.axios.get.error.badRequest(alias, path);
