@@ -33,9 +33,6 @@ export class FieldExpression {
                 stringValue = `(${innerValue})`;
             }
         }
-        // disabled this lint because value is passed in from javascript
-        // not typescript
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         else {
             stringValue = 'null';
         }
