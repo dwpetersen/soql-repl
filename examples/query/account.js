@@ -1,7 +1,7 @@
 const JS_PATH = '../../dist/'
 
 const query = require(JS_PATH+'./query/query.js');
-const alias = require('./alias.js');
+const auth = require('../auth.js');
 
 const runQuery = async () => {
     let accountQuery = new query.SOQLQuery();
@@ -11,7 +11,7 @@ const runQuery = async () => {
                 .equals('LAST_90_DAYS')
                 .limit(5)
                 .build()
-    await accountQuery.execute(alias.alias);
+    await accountQuery.execute(auth.alias);
     return JSON.stringify(accountQuery.result, null, 2);
 }
 
