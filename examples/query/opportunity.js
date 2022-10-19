@@ -1,7 +1,7 @@
 const JS_PATH = '../../dist/'
 
 const query = require(JS_PATH+'./query/query.js');
-const alias = require('./alias.js');
+const auth = require('../auth.js');
 
 const runQuery = async () => {
     let oppQuery = new query.SOQLQuery();
@@ -11,7 +11,7 @@ const runQuery = async () => {
             .in('Closed Won', 'Prospecting')
             .limit(5)
             .build();
-    await oppQuery.execute(alias.alias);
+    await oppQuery.execute(auth.alias);
     return JSON.stringify(oppQuery.result, null, 2);
 }
 
