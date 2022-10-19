@@ -1,4 +1,5 @@
 import { FieldExpression } from "./field-expression";
+import { getDateLiterals, getDateNLiterals } from "./types"
 
 describe('FieldExpression.expand()', () => {
     test('creates array [field, operator, convertedOperand]', () => {
@@ -15,6 +16,41 @@ describe('FieldExpression.expand()', () => {
 
         const expectedValue = [field, operator, `'${operand}'`];
         expect(actualValue).toEqual(expectedValue);
+    });
+
+    test('if operand is a DateLiteral assign the literal value', () => {
+        // Given
+        const field = 'Name';
+        const operator = '=';
+        const n = 5
+        
+        const expectedOperands = Array.from(getDateLiterals());
+        const fieldExps = expectedOperands.map((operand: string) => {
+            const fieldExp = new FieldExpression(field);
+            fieldExp.operator = operator;
+            fieldExp.operand = operand;
+            return fieldExp;
+        });
+        
+        const expectedNOperands = Array.from(getDateNLiterals()).map((item: string) => `${item}:${n}`);
+        const nFieldExps = expectedNOperands.map((operand: string) => {
+            const fieldExp = new FieldExpression(field);
+            fieldExp.operator = operator;
+            fieldExp.operand = operand;
+            return fieldExp;
+        });
+
+        // When
+        const actualOperands = fieldExps.map((expression: FieldExpression) => expression.expand()[2]);
+        const actualNOperands = nFieldExps.map((expression: FieldExpression) => expression.expand()[2]);
+
+        // Then
+        actualOperands.forEach((actualValue: string, index: number) => {
+            expect(actualValue).toEqual(expectedOperands[index]);
+        });
+        actualNOperands.forEach((actualValue: string, index: number) => {
+            expect(actualValue).toEqual(expectedNOperands[index]);
+        });
     });
 
     test('if operand string has single quotes, escape them', () => {
