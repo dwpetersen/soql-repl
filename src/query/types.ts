@@ -11,7 +11,7 @@ export function isDateLiteral(value: unknown) {
                              'LAST_QUARTER','NEXT_QUARTER','THIS_YEAR',
                              'NEXT_YEAR','THIS_FISCAL_QUARTER','LAST_FISCAL_QUARTER',
                              'NEXT_FISCAL_QUARTER','THIS_FISCAL_YEAR','NEXT_FISCAL_YEAR']);
-    if(!options.has(value as string)) {
+    if(options.has(value as string)) {
         return true;
     }
     else {
