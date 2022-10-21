@@ -1,6 +1,6 @@
-const JS_PATH = '../../dist/'
+const JS_PATH = '../../../dist'
 
-const query = require(JS_PATH+'./query/query.js');
+const query = require(`${JS_PATH}/query/query.js`);
 const auth = require('../auth.js');
 
 const runQuery = async () => {
@@ -15,27 +15,6 @@ const runQuery = async () => {
     return JSON.stringify(oppQuery.result, null, 2);
 }
 
-const run = async () => {
-    return await runQuery();
-}
-
-
-const handleThen = (data) => {
-    console.log(data);
-}
-
-const handleCatch = (err) => {
-    if (err.response) {
-        console.error(err.response.data);
-    }
-    else {
-        console.error(err);
-    }  
-}
-
-run().then(handleThen).catch(handleCatch);
-
 module.exports= {
-    run,
     runQuery
 }
