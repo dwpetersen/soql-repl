@@ -7,7 +7,7 @@ const alias = auth.alias;
 
 const getQuery = () => {
     let accountQuery = new query.SOQLQuery();
-    accountQuery.select('Id','Name', 'Industries__c')
+    accountQuery.select('FIELDS(ALL)')
                 .from('Account')
                 .where('CreatedDate')
                 .equals('LAST_90_DAYS')
