@@ -5,9 +5,20 @@ const auth = require('../auth.js');
 
 const alias = auth.alias;
 
-const getQuery = () => {
+const getAllFieldsQuery = () => {
     let accountQuery = new query.SOQLQuery();
     accountQuery.select('FIELDS(ALL)')
+                .from('Account')
+                .where('Id')
+                .notEquals(null)
+                .limit(10)
+                .build();
+    return accountQuery;
+}
+
+const getQuery = () => {
+    let accountQuery = new query.SOQLQuery();
+    accountQuery.select('Id', 'Name', 'Active__c')
                 .from('Account')
                 .where('CreatedDate')
                 .equals('LAST_90_DAYS')
@@ -24,6 +35,7 @@ const runQuery = async () => {
 
 module.exports = {
     alias,
+    getAllFieldsQuery,
     getQuery,
     runQuery
 }
