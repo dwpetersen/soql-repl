@@ -19,6 +19,8 @@ describe('get()', () => {
     
         const response = factory.createQueryResponse();
         mockGet.mockResolvedValue(response as AxiosResponse);
+
+        jest.spyOn(fs, 'writeFileSync').mockImplementation();
     
         //When
         const actualResponse = await httpRequest.get(alias, path);
@@ -37,7 +39,7 @@ describe('get()', () => {
         mockPost.mockResolvedValue(tokenResponse);
         mockGet.mockResolvedValue(response as AxiosResponse);
 
-        const mockWriteFileSync = jest.spyOn(fs, 'writeFileSync');
+        const mockWriteFileSync = jest.spyOn(fs, 'writeFileSync').mockImplementation();
     
         //When
         const actualResponse = await httpRequest.get(alias, path);
@@ -62,7 +64,7 @@ describe('get()', () => {
         mockPost.mockResolvedValue(tokenResponse);
         mockGet.mockResolvedValue(response as AxiosResponse);
 
-        const mockWriteFileSync = jest.spyOn(fs, 'writeFileSync');
+        const mockWriteFileSync = jest.spyOn(fs, 'writeFileSync').mockImplementation();
     
         //When
         const actualResponse = await httpRequest.get(alias, path);
@@ -81,6 +83,8 @@ describe('get()', () => {
     
         const response = mocks.axios.get.error.notFound(alias, path);
         mockGet.mockRejectedValue(response);
+
+        jest.spyOn(fs, 'writeFileSync').mockImplementation();
     
         //When
         let isError = false;
@@ -100,6 +104,8 @@ describe('get()', () => {
         //Given
         const alias = factory.createPasswordAlias(new Date());
         const path = factory.createQueryPath();
+
+        jest.spyOn(fs, 'writeFileSync').mockImplementation();
     
         const response = mocks.axios.get.error.badRequest(alias, path);
         mockGet.mockRejectedValue(response);

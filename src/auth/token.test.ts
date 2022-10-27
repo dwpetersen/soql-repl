@@ -7,7 +7,7 @@ import * as factory from '../__tests__/utils/factory';
 import * as mocks from '../__tests__/utils/mocks';
 
 let mockPost = jest.spyOn(axios, 'post');
-let mockWriteFileSync = jest.spyOn(fs, 'writeFileSync');
+let mockWriteFileSync = jest.spyOn(fs, 'writeFileSync').mockImplementation();
 
 describe('checkCurrentToken()', () => {
     test('if there\'s no token on alias, set new token and lastRequest date', async () => {
@@ -68,7 +68,7 @@ describe('checkCurrentToken()', () => {
 
 beforeEach(() => {
     mockPost = jest.spyOn(axios, 'post');
-    mockWriteFileSync = jest.spyOn(fs, 'writeFileSync');
+    mockWriteFileSync = jest.spyOn(fs, 'writeFileSync').mockImplementation();
 });
 
 afterEach(() => {

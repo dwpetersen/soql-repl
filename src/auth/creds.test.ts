@@ -9,7 +9,7 @@ describe('openAlias()', () => {
         //Given
         const alias: PasswordAlias = factory.createPasswordAlias();
         const aliasJSON = JSON.stringify(alias);
-        const mockReadFileSync = jest.spyOn(fs, 'readFileSync');
+        const mockReadFileSync = jest.spyOn(fs, 'readFileSync').mockImplementation();
         mockReadFileSync.mockReturnValue(Buffer.from(aliasJSON));
 
         //When
@@ -23,7 +23,7 @@ describe('openAlias()', () => {
         //Given
         const alias: OAuthAlias = factory.createOAuthAlias();
         const aliasJSON = JSON.stringify(alias);
-        const mockReadFileSync = jest.spyOn(fs, 'readFileSync');
+        const mockReadFileSync = jest.spyOn(fs, 'readFileSync').mockImplementation();
         mockReadFileSync.mockReturnValue(Buffer.from(aliasJSON));
 
         //When
@@ -37,7 +37,7 @@ describe('openAlias()', () => {
         //Given
         const alias = factory.createPasswordAlias(new Date());
         const aliasJSON = JSON.stringify(alias);
-        const mockReadFileSync = jest.spyOn(fs, 'readFileSync');
+        const mockReadFileSync = jest.spyOn(fs, 'readFileSync').mockImplementation();
         mockReadFileSync.mockReturnValue(Buffer.from(aliasJSON));
 
         //When
@@ -166,7 +166,7 @@ describe('isPasswordAlias()', () => {
 test('saveAlias() saves alias', () => {
     //Given
     const alias = factory.createPasswordAlias();
-    const mockWriteFileSync = jest.spyOn(fs, 'writeFileSync');
+    const mockWriteFileSync = jest.spyOn(fs, 'writeFileSync').mockImplementation();
 
     //When
     creds.saveAlias(alias);
