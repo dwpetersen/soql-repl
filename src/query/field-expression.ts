@@ -15,23 +15,38 @@ export class FieldExpression {
         this.operand = operand;
         this.brackets = brackets ? brackets : false;
     }
+    
+    private static hasBrackets(value: string) {
+        return value.includes('(') && value.includes(')');
+    }
 
     static fromString(value: string): FieldExpression {
         if (isField(value)) {
             return new FieldExpression(value);
         }
         else if (hasComparisonOperator(value)) {
-            const valueNoSpaces = value.replace(/ /g,'');
-            const containedOperators = getComparsionOperators().filter(item => valueNoSpaces.includes(item));
+            let brackets = false;
+            let strippedValue = '';
+            if (FieldExpression.hasBrackets(value)) {
+                brackets = true;
+                if (!(value.startsWith('(') && value.endsWith(')'))) {
+                    throw new Error(ERROR_NOT_VALID_FIELD_EXPRESSION);
+                }
+                strippedValue = value.replace(/[ ()]/g,'');
+            }
+            else {
+                strippedValue = value.replace(/ /g,'');
+            }
+            const containedOperators = getComparsionOperators().filter(item => strippedValue.includes(item));
             if (containedOperators.length != 1) {
                 throw new Error(ERROR_NOT_VALID_FIELD_EXPRESSION);
             }
             const operator = containedOperators[0] as Operator;
-            const [field, operand] = valueNoSpaces.split(operator);
+            const [field, operand] = strippedValue.split(operator);
             if (!isField(field)) {
                 throw new Error(ERROR_NOT_VALID_FIELD_EXPRESSION);
             }
-            return new FieldExpression(field, operator, operand);
+            return new FieldExpression(field, operator, operand, brackets);
         }
         else {
             throw new Error(ERROR_NOT_VALID_FIELD_EXPRESSION);
