@@ -6,11 +6,14 @@ export class FieldExpression {
     field?: string;
     operator?: Operator;
     operand?: Operand|Operand[];
+    brackets = false;
 
-    constructor(field?: string, operator?: Operator, operand?: Operand) {
+
+    constructor(field?: string, operator?: Operator, operand?: Operand, brackets?: boolean) {
         this.field = field;
         this.operator = operator;
         this.operand = operand;
+        this.brackets = brackets ? brackets : false;
     }
 
     static fromString(value: string): FieldExpression {

@@ -197,4 +197,21 @@ describe('FieldExpression.fromString()', () => {
 
         expect(actualFieldExp).toEqual(expectedFieldExp);
     });
+
+    test('if the value is a field expression (with brackets), populate the new FieldExpression', () => {
+        // Given
+        const value = `(Name = 'George')`;
+
+        // When
+        const actualFieldExp = FieldExpression.fromString(value);
+
+        // Then
+        const expectedFieldExp = new FieldExpression();
+        expectedFieldExp.field = 'Name';
+        expectedFieldExp.operator = '=';
+        expectedFieldExp.operand = `'George'`
+        expectedFieldExp.brackets = true;
+
+        expect(actualFieldExp).toEqual(expectedFieldExp);
+    });
 });
