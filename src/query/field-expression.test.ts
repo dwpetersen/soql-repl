@@ -133,3 +133,36 @@ describe('FieldExpression.expand()', () => {
         expect(actualValue).toEqual(expectedValue);
     });
 });
+
+describe('FieldExpression.fromString()', () => {
+    test('if the value only has letters, create FieldExpression with field', () => {
+        // Given
+        const value = 'Name';
+
+        // When
+        const actualFieldExp = FieldExpression.fromString(value);
+
+        // Then
+        const expectedFieldExp = new FieldExpression();
+        expectedFieldExp.field = value;
+
+        expect(actualFieldExp).toEqual(expectedFieldExp);
+    });
+    
+    test('if the value is blank, throw an Error', () => {
+        // Given
+        const value = '';
+
+        // When
+        let isError = false;
+        try {
+            FieldExpression.fromString(value);
+        }
+        catch(error) {
+            isError = true;
+        }
+
+        // Then
+        expect(isError).toBeTruthy();
+    });
+});

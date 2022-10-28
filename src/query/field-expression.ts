@@ -12,7 +12,7 @@ export class FieldExpression {
     }
 
     static fromString(value: string): FieldExpression {
-        const alphaRegex = new RegExp('/^[A-Za-z]*$/');
+        const alphaRegex = new RegExp('^[A-Za-z]+$');
         if (alphaRegex.test(value)) {
             const fieldExp = new FieldExpression(value);
             return fieldExp;
