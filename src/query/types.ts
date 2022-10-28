@@ -15,7 +15,7 @@ export function hasComparisonOperator(value: string) {
 }
 
 export function isField(value: string): boolean {
-    return /^[A-Za-z]+$/.test(value);
+    return /^[A-Za-z][A-Za-z0-9_]+[__c]{0,1}$/.test(value);
 }
 
 export function getDateLiterals(): Set<string> {
