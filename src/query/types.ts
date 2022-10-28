@@ -2,6 +2,18 @@ export type ComparisonOperator = '='|'!='|'<'|'<='|
                                  '>'|'>='|'LIKE'|'IN'|
                                  'NOT IN'|'INCLUDES'|'EXCLUDES';
 
+export function getComparsionOperators(): string[] {
+    return ['=','!=','<','<=',
+            '>','>=','LIKE','IN',
+            'NOT IN','INCLUDES','EXCLUDES'];
+}
+
+export function hasComparisonOperator(value: string) {
+    return getComparsionOperators().reduce((acc, operator) => {
+        return acc || value.includes(operator);
+    }, true);
+}
+
 export function getDateLiterals(): Set<string> {
     return new Set(['YESTERDAY','TODAY','TOMORROW',
                     'LAST_WEEK','THIS_WEEK','NEXT_WEEK',
