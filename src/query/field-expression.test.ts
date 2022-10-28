@@ -132,6 +132,23 @@ describe('FieldExpression.expand()', () => {
         const expectedValue = [field, operator, 'null'];
         expect(actualValue).toEqual(expectedValue);
     });
+
+    test('if this.brackets, creates array ["(", field, operator, convertedOperand, ")"]', () => {
+        // Given
+        const field = 'Name';
+        const operator = '='
+        const operand = 'Umbrella Corp';
+        const fieldExp = new FieldExpression(field);
+        fieldExp.operator = operator;
+        fieldExp.operand = operand;
+        fieldExp.brackets = true;
+
+        // When
+        const actualValue = fieldExp.expand();
+
+        const expectedValue = ['(', field, operator, `'${operand}'`, ')'];
+        expect(actualValue).toEqual(expectedValue);
+    });
 });
 
 describe('FieldExpression.fromString()', () => {

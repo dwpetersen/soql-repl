@@ -86,7 +86,10 @@ export class FieldExpression {
 
     expand(): string[] {
         const expandedExpression: string[] = [];
-        if(this.field) {
+        if (this.brackets) {
+            expandedExpression.push('(');
+        }
+        if (this.field) {
             expandedExpression.push(this.field);
         }
         if (this.operator) {
@@ -94,6 +97,9 @@ export class FieldExpression {
         }
         if (this.operand !== undefined) {
             expandedExpression.push(this.operandToString());
+        }
+        if (this.brackets) {
+            expandedExpression.push(')');
         }
         return expandedExpression;
     }
