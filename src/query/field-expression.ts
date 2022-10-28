@@ -1,12 +1,25 @@
 import { isDateLiteral, Operand, Operator } from "./types";
 
 export class FieldExpression {
-    field: string;
+    field?: string;
     operator?: Operator;
     operand?: Operand|Operand[];
 
-    constructor(field: string) {
+    constructor(field?: string, operator?: Operator, operand?: Operand) {
         this.field = field;
+        this.operator = operator;
+        this.operand = operand;
+    }
+
+    static fromString(value: string): FieldExpression {
+        const alphaRegex = new RegExp('/^[A-Za-z]*$/');
+        if (alphaRegex.test(value)) {
+            const fieldExp = new FieldExpression(value);
+            return fieldExp;
+        }
+        else {
+            throw new Error('Value is not a valid field expression');
+        }
     }
 
     private operandToString(operand?: Operand) {
@@ -14,7 +27,7 @@ export class FieldExpression {
         let stringValue = '';
         if(operandToConvert) {
             if (typeof operandToConvert === 'string') {
-                if(isDateLiteral(operandToConvert)) {
+                if (isDateLiteral(operandToConvert)) {
                     stringValue = operandToConvert;
                 }
                 else {
@@ -41,11 +54,14 @@ export class FieldExpression {
     }
 
     expand(): string[] {
-        const expandedExpression: string[] = [this.field];
-        if(this.operator) {
+        const expandedExpression: string[] = [];
+        if(this.field) {
+            expandedExpression.push(this.field);
+        }
+        if (this.operator) {
             expandedExpression.push(this.operator);
         }
-        if(this.operand !== undefined) {
+        if (this.operand !== undefined) {
             expandedExpression.push(this.operandToString());
         }
         return expandedExpression;

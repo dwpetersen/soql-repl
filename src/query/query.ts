@@ -48,9 +48,9 @@ export class SOQLQuery {
         return this;
     }
 
-    where(field: string) {
+    where(value: string) {
         this.currentStatement = Statements.WHERE;
-        this.whereItems.push(new FieldExpression(field));
+        this.whereItems.push(new FieldExpression(value));
         return this;
     }
 
