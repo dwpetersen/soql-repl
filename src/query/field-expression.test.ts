@@ -182,16 +182,16 @@ describe('FieldExpression.fromString()', () => {
         expect(actualFieldExp).toEqual(expectedFieldExp);
     });
 
-    test('if the value is a field expression with custom field, populate the new FieldExpression', () => {
+    test('if the value is a field expression (no brackets, no spaces), populate the new FieldExpression', () => {
         // Given
-        const value = `Custom_Name1__c = 'George'`;
+        const value = `Name='George'`;
 
         // When
         const actualFieldExp = FieldExpression.fromString(value);
 
         // Then
         const expectedFieldExp = new FieldExpression();
-        expectedFieldExp.field = 'Custom_Name1__c';
+        expectedFieldExp.field = 'Name';
         expectedFieldExp.operator = '=';
         expectedFieldExp.operand = `'George'`
 
