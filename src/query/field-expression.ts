@@ -1,6 +1,7 @@
 import { getComparsionOperators, hasComparisonOperator, isDateLiteral, isField, Operand, Operator } from "./types";
 
-const ERROR_NOT_VALID_FIELD_EXPRESSION = 'Value is not a valid field expression';
+const ERROR_BRACKETS_NOT_AT_START_AND_END = 'Found brackets but there were none at either the start or the end of the expression.';
+const ERROR_MULTIPLE_OPERATORS_FOUND = 'Multiple operators found where there should be just one.';
 
 export class FieldExpression {
     field?: string;
@@ -21,6 +22,8 @@ export class FieldExpression {
     }
 
     static fromString(value: string): FieldExpression {
+        // TODO: Logical expressions e.g. "Name = 'Hello' AND Value__c = 500"
+        // TODO: Nested Expressions e.g. "(Name = 'Hello' AND Value__c = 500) OR (CreatedDate = TODAY AND Value__c = 100)"
         if (isField(value)) {
             return new FieldExpression(value);
         }
@@ -30,7 +33,7 @@ export class FieldExpression {
             if (FieldExpression.hasBrackets(value)) {
                 brackets = true;
                 if (!(value.startsWith('(') && value.endsWith(')'))) {
-                    throw new Error(ERROR_NOT_VALID_FIELD_EXPRESSION);
+                    throw new FieldExpressionParsingError(ERROR_BRACKETS_NOT_AT_START_AND_END);
                 }
                 strippedValue = value.replace(/[ ()]/g,'');
             }
@@ -39,17 +42,17 @@ export class FieldExpression {
             }
             const containedOperators = getComparsionOperators().filter(item => strippedValue.includes(item));
             if (containedOperators.length != 1) {
-                throw new Error(ERROR_NOT_VALID_FIELD_EXPRESSION);
+                throw new FieldExpressionParsingError(ERROR_MULTIPLE_OPERATORS_FOUND);
             }
             const operator = containedOperators[0] as Operator;
             const [field, operand] = strippedValue.split(operator);
             if (!isField(field)) {
-                throw new Error(ERROR_NOT_VALID_FIELD_EXPRESSION);
+                throw new NotAFieldError(field);
             }
             return new FieldExpression(field, operator, operand, brackets);
         }
         else {
-            throw new Error(ERROR_NOT_VALID_FIELD_EXPRESSION);
+            throw new FieldExpressionParsingError();
         }
     }
 
@@ -102,5 +105,20 @@ export class FieldExpression {
             expandedExpression.push(')');
         }
         return expandedExpression;
+    }
+}
+
+export class FieldExpressionParsingError extends Error {
+    constructor(message?: string) {
+        message = message ? message : 'Value is not a valid field expression.'
+        super(message);
+        Object.setPrototypeOf(this, FieldExpressionParsingError);
+    }
+}
+
+export class NotAFieldError extends FieldExpressionParsingError {
+    constructor(value: string) {
+        super(`Value is not a field: ${value}`);
+        Object.setPrototypeOf(this, NotAFieldError);
     }
 }
