@@ -148,7 +148,7 @@ describe('FieldExpression.fromString()', () => {
 
         expect(actualFieldExp).toEqual(expectedFieldExp);
     });
-    
+
     test('if the value is blank, throw an Error', () => {
         // Given
         const value = '';
@@ -164,5 +164,21 @@ describe('FieldExpression.fromString()', () => {
 
         // Then
         expect(isError).toBeTruthy();
+    });
+
+    test('if the value is a field expression (no brackets), populate the new FieldExpression', () => {
+        // Given
+        const value = `Name = 'George'`;
+
+        // When
+        const actualFieldExp = FieldExpression.fromString(value);
+
+        // Then
+        const expectedFieldExp = new FieldExpression();
+        expectedFieldExp.field = 'Name';
+        expectedFieldExp.operator = '=';
+        expectedFieldExp.operand = `'George'`
+
+        expect(actualFieldExp).toEqual(expectedFieldExp);
     });
 });
