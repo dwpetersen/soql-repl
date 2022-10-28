@@ -1,4 +1,4 @@
-import { getComparsionOperators, hasComparisonOperator, isDateLiteral, Operand, Operator } from "./types";
+import { getComparsionOperators, hasComparisonOperator, isDateLiteral, isField, Operand, Operator } from "./types";
 
 const ERROR_NOT_VALID_FIELD_EXPRESSION = 'Value is not a valid field expression';
 
@@ -14,8 +14,7 @@ export class FieldExpression {
     }
 
     static fromString(value: string): FieldExpression {
-        const alphaRegex = new RegExp('^[A-Za-z]+$');
-        if (alphaRegex.test(value)) {
+        if (isField(value)) {
             return new FieldExpression(value);
         }
         else if (hasComparisonOperator(value)) {
@@ -26,7 +25,7 @@ export class FieldExpression {
             }
             const operator = containedOperators[0] as Operator;
             const [field, operand] = valueNoSpaces.split(operator);
-            if (!alphaRegex.test(field)) {
+            if (!isField(field)) {
                 throw new Error(ERROR_NOT_VALID_FIELD_EXPRESSION);
             }
             return new FieldExpression(field, operator, operand);

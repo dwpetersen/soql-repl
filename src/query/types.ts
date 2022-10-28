@@ -14,6 +14,10 @@ export function hasComparisonOperator(value: string) {
     }, true);
 }
 
+export function isField(value: string): boolean {
+    return /^[A-Za-z]+$/.test(value);
+}
+
 export function getDateLiterals(): Set<string> {
     return new Set(['YESTERDAY','TODAY','TOMORROW',
                     'LAST_WEEK','THIS_WEEK','NEXT_WEEK',
