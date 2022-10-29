@@ -547,3 +547,18 @@ test('execute() returns an error when path is not set', async () => {
         expect(err).toEqual(new Error(ERROR_PATH_MUST_BE_SET))
     }
 });
+
+describe('SOQLQuery.toString()', () => {
+    test('Creates a valid SOQL statement', () => {
+        // Given
+        const query = new SOQLQuery().select('Id', 'Name')
+                                     .from('Account')
+
+        // When
+        const actual = query.toString();
+        
+        // Then
+        const expected = 'SELECT Id, Name FROM Account'
+        expect(actual).toBe(expected);
+    });
+});

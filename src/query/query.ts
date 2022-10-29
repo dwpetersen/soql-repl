@@ -176,4 +176,8 @@ export class SOQLQuery {
             throw new Error(ERROR_PATH_MUST_BE_SET);
         }
     }
+
+    toString() {
+        return this.toList().join(' ').replaceAll(',', ', ');
+    }
 }
