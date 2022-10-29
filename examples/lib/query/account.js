@@ -9,8 +9,6 @@ const getAllFieldsQuery = () => {
     let accountQuery = new query.SOQLQuery();
     accountQuery.select('FIELDS(ALL)')
                 .from('Account')
-                .where('Id')
-                .notEquals(null)
                 .limit(10)
                 .build();
     return accountQuery;
@@ -20,9 +18,9 @@ const getQuery = () => {
     let accountQuery = new query.SOQLQuery();
     accountQuery.select('Id', 'Name', 'Active__c')
                 .from('Account')
-                .where('CreatedDate')
-                .equals('LAST_90_DAYS')
-                .limit(5)
+                .where('Name')
+                .like('E%')
+                .limit(2)
                 .build();
     return accountQuery;
 }
