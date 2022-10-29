@@ -552,13 +552,60 @@ describe('SOQLQuery.toString()', () => {
     test('Creates a valid SOQL statement', () => {
         // Given
         const query = new SOQLQuery().select('Id', 'Name')
-                                     .from('Account')
+                                     .from('Account');
 
         // When
         const actual = query.toString();
         
         // Then
-        const expected = 'SELECT Id, Name FROM Account'
+        const expected = 'SELECT Id, Name FROM Account';
+        expect(actual).toBe(expected);
+    });
+
+    test('Creates a valid SOQL statement with WHERE', () => {
+        // Given
+        const query = new SOQLQuery().select('Id', 'Name')
+                                     .from('Account')
+                                     .where('Name')
+                                     .equals('Umbrella Corp');
+
+        // When
+        const actual = query.toString();
+        
+        // Then
+        const expected = `SELECT Id, Name FROM Account WHERE Name = 'Umbrella Corp'`;
+        expect(actual).toBe(expected);
+    });
+
+    test('Creates a valid SOQL statement with LIMIT', () => {
+        // Given
+        const query = new SOQLQuery().select('Id', 'Name')
+                                     .from('Account')
+                                     .limit(5);
+
+
+        // When
+        const actual = query.toString();
+        
+        // Then
+        const expected = `SELECT Id, Name FROM Account LIMIT 5`;
+        expect(actual).toBe(expected);
+    });
+
+    test('Creates a valid SOQL statement with WHERE and LIMIT in correct order', () => {
+        // Given
+        const query = new SOQLQuery().select('Id', 'Name')
+                                     .from('Account')
+                                     .where('Name')
+                                     .equals('Umbrella Corp')
+                                     .limit(5);
+
+
+        // When
+        const actual = query.toString();
+        
+        // Then
+        const expected = `SELECT Id, Name FROM Account WHERE Name = 'Umbrella Corp' LIMIT 5`;
         expect(actual).toBe(expected);
     });
 });
