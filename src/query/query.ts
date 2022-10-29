@@ -149,15 +149,20 @@ export class SOQLQuery {
         return this;
     }
 
+    private toList() {
+        const queryComponents = [];
+        queryComponents.push('SELECT', this.selectItems.join(','), 'FROM', this.fromValue);
+        if (this.whereItems.length > 0) {
+            queryComponents.push('WHERE', ...this.expandWhereItems());
+        }
+        if (this.limitValue) {
+            queryComponents.push('LIMIT', this.limitValue);
+        }
+        return queryComponents;
+    }
+
     build() {
-        this.paramString = encodeURI(['SELECT',
-                                 this.selectItems.join(','),
-                                 'FROM',
-                                 this.fromValue,
-                                 'WHERE',
-                                 ...this.expandWhereItems(),
-                                 'LIMIT',
-                                 this.limitValue].join('+'));
+        this.paramString = encodeURI(this.toList().join('+'));
         this.path = QUERY_PATH + this.paramString;
         return this;
     }
