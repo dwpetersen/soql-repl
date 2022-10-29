@@ -25,8 +25,7 @@ const getQuery = () => {
     return accountQuery;
 }
 
-const runQuery = async () => {
-    let accountQuery = getQuery();
+const runQuery = async (accountQuery) => {
     await accountQuery.execute(alias);
     return JSON.stringify(accountQuery.result, null, 2);
 }

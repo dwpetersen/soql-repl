@@ -1,5 +1,5 @@
-const runner = async (func) => {
-    return await func();
+const runner = async (func, ...args) => {
+    return await func(...args);
 }
 
 
@@ -16,8 +16,8 @@ const handleCatch = (err) => {
     }  
 }
 
-const run = (func) => {
-    runner(func).then(handleThen).catch(handleCatch);
+const run = (func, ...args) => {
+    runner(func, ...args).then(handleThen).catch(handleCatch);
 }
 
 module.exports= {

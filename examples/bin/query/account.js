@@ -3,8 +3,7 @@ const runner = require(`${LIB_DIR}/run.js`);
 
 const account = require(`${LIB_DIR}/query/account.js`);
 
-const query = account.getQuery();
-console.log(`Query: '${query.toString()}'`);
-console.log(`Path: '${query.path}'`);
-runner.run(account.runQuery);
-
+const accountQuery = account.getQuery();
+console.log(`Query: '${accountQuery.toString()}'`);
+console.log(`Path: '${accountQuery.path}'`);
+runner.run(account.runQuery, accountQuery);

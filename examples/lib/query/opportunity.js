@@ -16,8 +16,7 @@ const getQuery = () => {
     return oppQuery;
 }
 
-const runQuery = async () => {
-    let oppQuery = getQuery();
+const runQuery = async (oppQuery) => {
     await oppQuery.execute(auth.alias);
     return JSON.stringify(oppQuery.result, null, 2);
 }
