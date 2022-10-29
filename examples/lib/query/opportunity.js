@@ -11,7 +11,7 @@ const getQuery = () => {
         .from('Opportunity')
         .where('StageName')
         .in('Closed Won', 'Prospecting')
-        .limit(5)
+        .limit(2)
         .build();
     return oppQuery;
 }
