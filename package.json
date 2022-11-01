@@ -9,9 +9,9 @@
     "clean": "rm -r dist/*",
     "test": "jest",
     "example:account": "node examples/bin/query/account.js",
-    "example:display:account": "bash examples/lib/bat.sh examples/bin/query/account.js",
+    "example:display:account": "bash examples/bin/display/account.sh",
     "example:opp": "node examples/bin/query/opportunity.js",
-    "example:display:opp": "bash examples/lib/bat.sh examples/bin/query/opportunity.js"
+    "example:display:opp": "bash examples/bin/display/opportunity.sh"
   },
   "author": "Dean Petersen",
   "license": "MIT",

@@ -1,8 +1,8 @@
 #!/bin/bash
 if [ -x "$(command -v bat)" ]; then
-    bat $@
+    bat -P $@
 elif [ -x "$(command -v batcat)" ]; then
-    batcat $@
+    batcat -P $@
 else
     cat $@
 fi
