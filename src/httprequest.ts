@@ -37,6 +37,7 @@ async function retry<T,P extends unknown[]>(request: (...args: [...P]) => Promis
 }
 
 export async function get<T = never>(alias: Alias, path: string, headers?: object): Promise<AxiosResponse<T>> {
+    await token.checkCurrentToken(alias);
     const defaultHeaders = getDefaultHeaders(alias);
     const config = {
         baseURL: alias.url,
@@ -48,7 +49,6 @@ export async function get<T = never>(alias: Alias, path: string, headers?: objec
         return axios.get<T>(...args);
     };
 
-    await token.checkCurrentToken(alias);
     const response = await retry(wrappedAxiosGet, params);
     alias.lastRequest = new Date();
     creds.saveAlias(alias);
