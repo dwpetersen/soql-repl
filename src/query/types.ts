@@ -14,6 +14,16 @@ export function hasComparisonOperator(value: string) {
     }, true);
 }
 
+function getLogicalOperators(): string[] {
+    return ['AND','OR','NOT'];
+}
+
+export function hasLogicalOperator(value: string) {
+    return getLogicalOperators().reduce((acc, operator) => {
+        return acc || value.includes(operator);
+    }, true);
+}
+
 export function isField(value: string): boolean {
     return /^[A-Za-z][A-Za-z0-9_]+[__c]{0,1}$/.test(value);
 }
